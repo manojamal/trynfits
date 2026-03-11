@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>TryNFits — Admin & Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* === THEME: TryNFits Teal/Neutral (matches main portal) === */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:15px}
+body{font-family:'DM Sans',sans-serif;background:#F7F5F0;color:#1A1A18;min-height:100vh;overflow-x:hidden}
+button,input,select,textarea{font-family:'DM Sans',sans-serif}
+button{cursor:pointer}
+:root{
+  --bg:#F7F5F0;--white:#fff;--paper:#FDFCF9;
+  --ink:#1A1A18;--ink2:#3D3D38;--ink3:#72706A;--ink4:#A8A59E;--ink5:#D8D4CC;
+  --teal:#0B6E68;--teal2:#0D8A82;--tl:#E8F5F4;--tb:#B8E5E2;
+  --amber:#C17F24;--al:#FEF6E7;--ab:#FCDEA0;
+  --rose:#B5294E;--rl:#FDF0F4;--rb:#F5B8CC;
+  --sage:#3D6B5C;--sl:#EBF3EF;
+  --red:#C0392B;--rdl:#FDECEA;
+  --sky:#1D6FAD;--skl:#EFF6FF;
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;--r99:999px;
+  --sh:0 1px 4px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04);
+  --shm:0 4px 20px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.06);
+  --shl:0 12px 48px rgba(0,0,0,.14),0 4px 16px rgba(0,0,0,.08);
+}
+
+/* ROLE SCREEN */
+#role-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(145deg,#0B6E68,#083D3A 50%,#05302D);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#role-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(255,255,255,.04) 0%,transparent 60%)}
+.rs-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,7vw,54px);font-weight:700;color:#fff;letter-spacing:-1.5px;margin-bottom:6px;text-align:center;position:relative;z-index:1}
+.rs-logo em{color:#B8E5E2;font-style:normal}
+.rs-sub{font-size:11.5px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:28px;text-align:center;position:relative;z-index:1}
+.rs-admin-badge{font-size:12px;background:rgba(255,255,255,.1);color:#B8E5E2;padding:5px 16px;border-radius:var(--r99);border:1px solid rgba(184,229,226,.3);margin-bottom:20px;position:relative;z-index:1}
+.rs-curr{display:flex;gap:8px;margin-bottom:30px;position:relative;z-index:1}
+.rs-curr-btn{padding:7px 18px;border-radius:var(--r99);font-size:12.5px;font-weight:500;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s}
+.rs-curr-btn.on{background:#fff;color:var(--teal);border-color:#fff;font-weight:700}
+.rs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:480px;position:relative;z-index:1}
+.rs-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:var(--r16);padding:24px 16px;text-align:center;cursor:pointer;transition:all .22s;backdrop-filter:blur(10px)}
+.rs-card:hover{background:rgba(255,255,255,.16);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.rs-card-ic{font-size:32px;margin-bottom:10px}
+.rs-card-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.rs-card-desc{font-size:11px;color:rgba(255,255,255,.45);line-height:1.4}
+.rs-link{font-size:12px;color:rgba(255,255,255,.35);margin-top:22px;position:relative;z-index:1}
+.rs-link a{color:rgba(255,255,255,.6);text-decoration:underline;cursor:pointer}
+
+/* APP SHELL */
+#app{display:none;flex-direction:column;min-height:100vh;width:100%}
+#app.show{display:flex}
+
+/* TOPBAR */
+#topbar{height:56px;background:var(--white);border-bottom:1px solid var(--ink5);display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:200;box-shadow:var(--sh);width:100%}
+.tb-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--teal);cursor:pointer;white-space:nowrap;letter-spacing:-.5px}
+.tb-logo em{color:var(--ink);font-style:normal}
+.tb-role{font-size:11px;background:var(--tl);color:var(--teal);padding:3px 10px;border-radius:var(--r99);font-weight:600;border:1px solid var(--tb);white-space:nowrap}
+.tb-spacer{flex:1}
+.tb-curr-wrap{display:flex;gap:4px}
+.tb-curr{padding:4px 10px;border-radius:var(--r99);font-size:11.5px;font-weight:600;border:1px solid var(--ink5);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s}
+.tb-curr.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.tb-switch{font-size:11.5px;color:var(--ink3);background:none;border:1px solid var(--ink5);border-radius:var(--r99);padding:4px 12px;transition:all .15s;white-space:nowrap}
+.tb-switch:hover{background:var(--bg)}
+.tb-live{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink3)}
+.tb-live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* LAYOUT */
+#layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px)}
+#sidebar{width:210px;min-width:210px;background:var(--white);border-right:1px solid var(--ink5);display:flex;flex-direction:column;overflow-y:auto;padding:10px 8px}
+#content{flex:1;overflow-y:auto;background:var(--bg)}
+
+/* SIDEBAR */
+.sb-grp{font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink4);padding:12px 10px 4px;font-weight:600}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r8);cursor:pointer;font-size:13px;color:var(--ink3);border:none;background:none;width:100%;text-align:left;transition:all .15s;font-family:'DM Sans',sans-serif}
+.sb-item:hover{background:var(--bg);color:var(--ink)}
+.sb-item.on{background:var(--tl);color:var(--teal);font-weight:600}
+.sb-ic{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.sb-bdg{margin-left:auto;font-size:10px;font-weight:700;padding:2px 6px;border-radius:var(--r99);background:var(--rl);color:var(--rose)}
+.sb-bdg-amber{margin-left:auto;font-size:10px;font-weight:700;padding:2px 6px;border-radius:var(--r99);background:var(--al);color:var(--amber)}
+.sb-div{height:1px;background:var(--ink5);margin:8px 0}
+.sb-bottom{padding:10px;margin-top:auto;border-top:1px solid var(--ink5)}
+.sb-bottom a{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r8);font-size:12.5px;color:var(--ink4);text-decoration:none;transition:all .15s}
+.sb-bottom a:hover{background:var(--bg);color:var(--teal)}
+
+/* BOTTOM NAV */
+#bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--ink5);z-index:200;padding:4px 0 max(env(safe-area-inset-bottom),4px)}
+.bn-row{display:flex;justify-content:space-around}
+.bn-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;border:none;background:none;color:var(--ink4);cursor:pointer;min-width:50px;position:relative;font-family:'DM Sans',sans-serif}
+.bn-btn.on{color:var(--teal)}
+.bn-ic{font-size:21px;line-height:1;position:relative}
+.bn-lbl{font-size:9.5px;font-weight:500}
+.bn-dot{position:absolute;top:-2px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--rose);border:2px solid var(--white)}
+
+/* CONTENT PAGES */
+.page{padding:18px;display:none;animation:pgIn .2s ease both}
+.page.on{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.pg-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap}
+.pg-title{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3vw,26px);font-weight:600;line-height:1.1}
+.pg-sub{font-size:12px;color:var(--ink4);margin-top:3px}
+.pg-acts{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--ink5);border-radius:var(--r12);box-shadow:var(--sh)}
+.cd-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--ink5)}
+.cd-title{font-size:13.5px;font-weight:600}
+.cd-sub{font-size:11px;color:var(--ink4);margin-top:1px}
+.mb14{margin-bottom:14px}
+.mb10{margin-bottom:10px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:15px;margin-bottom:14px}
+
+/* KPI */
+.kpi{padding:15px;border-left:3px solid var(--kc,var(--teal));overflow:hidden;position:relative}
+.kpi::after{content:attr(data-ic);position:absolute;right:10px;bottom:4px;font-size:26px;opacity:.1;line-height:1}
+.kpi-l{font-size:9.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink4);margin-bottom:6px;font-weight:600}
+.kpi-v{font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.5vw,27px);font-weight:600;color:var(--ink);line-height:1;margin-bottom:3px}
+.kpi-n{font-size:11.5px;font-weight:500}
+.kpi-n.up{color:var(--sage)}.kpi-n.dn{color:var(--red)}.kpi-n.neu{color:var(--ink4)}
+
+/* BADGE */
+.bdg{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:var(--r99);white-space:nowrap}
+.bdg-teal{background:var(--tl);color:var(--teal)}
+.bdg-amber{background:var(--al);color:var(--amber)}
+.bdg-rose{background:var(--rl);color:var(--rose)}
+.bdg-sage{background:var(--sl);color:var(--sage)}
+.bdg-gray{background:var(--bg);color:var(--ink3)}
+.bdg-sky{background:var(--skl);color:var(--sky)}
+.bdg-red{background:var(--rdl);color:var(--red)}
+
+/* BUTTON */
+.btn{padding:9px 17px;border-radius:var(--r8);font-size:13px;font-weight:600;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .15s;line-height:1.2;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.btn-p{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-p:hover{background:var(--teal2)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-o{background:var(--white);color:var(--ink2);border-color:var(--ink5)}
+.btn-o:hover{background:var(--bg)}
+.btn-d{background:var(--rose);color:#fff}
+.btn-d:hover{opacity:.9}
+.btn-amber{background:var(--amber);color:#fff}
+.btn-g{background:none;border:none;color:var(--ink3);padding:6px 8px;font-size:13px}
+.btn-g:hover{color:var(--ink)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-xs{padding:4px 8px;font-size:11.5px}
+.btn-fw{width:100%}
+
+/* FORM */
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;padding:9px 11px;border:1px solid var(--ink5);border-radius:var(--r8);font-size:13px;background:var(--white);color:var(--ink);transition:all .15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--tl);outline:none}
+.fld textarea{min-height:78px;resize:vertical}
+.fld input[type=file]{padding:7px;cursor:pointer;background:var(--bg);font-size:12px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.req{color:var(--rose)}
+.fsec{font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin:15px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--ink5)}
+
+/* IMAGE UPLOAD */
+.img-upload-zone{border:2px dashed var(--ink5);border-radius:var(--r12);padding:22px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);position:relative;overflow:hidden}
+.img-upload-zone:hover{border-color:var(--teal);background:var(--tl)}
+.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-zone-ic{font-size:28px;margin-bottom:7px}
+.img-upload-zone-txt{font-size:13px;color:var(--ink3);font-weight:500}
+.img-upload-zone-sub{font-size:11px;color:var(--ink4);margin-top:3px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r12);border:1px solid var(--ink5)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink4);padding:10px 13px;border-bottom:1px solid var(--ink5);white-space:nowrap;background:var(--bg)}
+.tbl td{padding:11px 13px;font-size:13px;border-bottom:1px solid var(--ink5);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl-row{cursor:pointer;transition:background .12s}
+.tbl-row:hover td{background:var(--tl)}
+.tbl-hide{display:table-cell}
+
+/* INFO ROWS */
+.irow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ink5)}
+.irow:last-child{border-bottom:none}
+.irow-l{font-size:12.5px;color:var(--ink3)}
+.irow-v{font-size:13px;font-weight:600;text-align:right}
+
+/* ALERT */
+.alert{padding:11px 13px;border-radius:var(--r8);font-size:12.5px;margin-bottom:13px;display:flex;gap:9px;align-items:flex-start;line-height:1.55}
+.a-teal{background:var(--tl);color:var(--teal);border:1px solid var(--tb)}
+.a-amber{background:var(--al);color:var(--amber);border:1px solid var(--ab)}
+.a-red{background:var(--rdl);color:var(--red);border:1px solid #F5C6C2}
+.a-rose{background:var(--rl);color:var(--rose);border:1px solid var(--rb)}
+.a-ic{font-size:15px;flex-shrink:0;margin-top:1px}
+
+/* TABS */
+.tab-bar{display:flex;gap:2px;padding:3px;background:var(--bg);border-radius:var(--r8);margin-bottom:14px;border:1px solid var(--ink5)}
+.tab-btn{flex:1;padding:7px;border-radius:var(--r4);font-size:12.5px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--ink3);transition:all .15s;text-align:center;font-family:'DM Sans',sans-serif}
+.tab-btn.on{background:var(--white);color:var(--teal);font-weight:700;box-shadow:var(--sh)}
+
+/* SEARCH */
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--ink5);border-radius:var(--r8);padding:0 11px;margin-bottom:13px}
+.search-bar input{flex:1;border:none;background:none;padding:10px 0;font-size:13px;color:var(--ink)}
+.search-bar input:focus{outline:none}
+.search-bar input::placeholder{color:var(--ink4)}
+.sb-ic{font-size:15px;color:var(--ink4)}
+
+/* CHIPS */
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:13px;-webkit-overflow-scrolling:touch}
+.chip{padding:5px 13px;border-radius:var(--r99);font-size:12px;font-weight:500;border:1px solid var(--ink5);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.chip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* MODAL */
+.ovl{position:fixed;inset:0;background:rgba(26,26,24,.55);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.ovl.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:var(--r24) var(--r24) 0 0;width:100%;max-width:640px;max-height:93vh;overflow-y:auto;transform:translateY(60px);transition:transform .28s cubic-bezier(.34,1.2,.64,1)}
+.ovl.open .modal{transform:translateY(0)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--ink5);position:sticky;top:0;background:var(--white);z-index:2}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--ink5);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--ink3);transition:all .15s}
+.modal-close:hover{background:var(--ink5)}
+.modal-body{padding:20px}
+.modal-foot{padding:13px 20px;border-top:1px solid var(--ink5);display:flex;gap:10px;position:sticky;bottom:0;background:var(--white)}
+
+/* CONFIRM */
+.conf-ovl{position:fixed;inset:0;background:rgba(26,26,24,.6);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.conf-ovl.open{opacity:1;pointer-events:all}
+.conf-box{background:var(--white);border-radius:var(--r16);padding:24px;width:100%;max-width:360px;box-shadow:var(--shl);transform:scale(.95);transition:transform .2s}
+.conf-ovl.open .conf-box{transform:scale(1)}
+.conf-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:8px}
+.conf-msg{font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:20px}
+.conf-btns{display:flex;gap:10px;justify-content:flex-end}
+
+/* TOAST */
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--r8);font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .28s;pointer-events:none;max-width:90vw;box-shadow:var(--shm);text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* LIVE FEED */
+.feed-item{display:flex;gap:10px;padding:10px 15px;border-bottom:1px solid var(--ink5)}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.feed-text{font-size:12.5px;font-weight:500;color:var(--ink2);line-height:1.4}
+.feed-time{font-size:11px;color:var(--ink4);margin-top:2px}
+
+/* CHART */
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:80px;padding:0 2px}
+.chart-bar{flex:1;border-radius:var(--r4) var(--r4) 0 0;background:var(--tl);border-top:2px solid var(--teal);transition:height .9s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.chart-bar:hover{background:var(--tb)}
+.chart-labels{display:flex;justify-content:space-between;padding:0 2px;margin-top:4px}
+.chart-lbl{font-size:9.5px;color:var(--ink4);flex:1;text-align:center}
+
+/* PROGRESS */
+.prog-bar{height:6px;background:var(--ink5);border-radius:var(--r99);overflow:hidden;margin-top:5px}
+.prog-fill{height:100%;border-radius:var(--r99);transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* LIVE ORDER */
+.live-order{background:var(--white);border:1px solid var(--ink5);border-radius:var(--r12);padding:14px 15px;margin-bottom:10px;border-left:3px solid var(--lc,var(--ink5))}
+.live-order.urgent{border-left-color:var(--red);animation:borderPulse 2s infinite}
+.live-order.active{border-left-color:var(--amber)}
+.live-order.ok{border-left-color:var(--teal)}
+@keyframes borderPulse{0%,100%{border-left-color:var(--red)}50%{border-left-color:#F5C6C2}}
+
+/* AVATAR */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+
+/* MISC */
+.empty{text-align:center;padding:38px 20px}
+.empty-ic{font-size:42px;margin-bottom:11px}
+.empty-t{font-size:15px;font-weight:600;color:var(--ink3)}
+.empty-s{font-size:12.5px;color:var(--ink4);margin-top:4px}
+.divider{height:1px;background:var(--ink5);margin:13px 0}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  #sidebar{display:none}
+  #bot-nav{display:block}
+  #content{padding-bottom:68px}
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .g21{grid-template-columns:1fr}
+  .tbl-hide{display:none!important}
+}
+@media(max-width:500px){
+  .g2{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  .rs-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ROLE SCREEN -->
+<div id="role-screen">
+  <div class="rs-logo">TryN<em>Fits</em></div>
+  <div class="rs-sub">Platform Control</div>
+  <div class="rs-admin-badge">🔐 Admin & Operations Portal</div>
+  <div class="rs-curr">
+    <button class="rs-curr-btn on" onclick="pickCurr('INR',this)">₹ India (INR)</button>
+    <button class="rs-curr-btn" onclick="pickCurr('NGN',this)">₦ Nigeria (NGN)</button>
+  </div>
+  <div class="rs-grid">
+    <div class="rs-card" onclick="enterRole('admin')"><div class="rs-card-ic">⚙️</div><div class="rs-card-name">Admin</div><div class="rs-card-desc">Full platform control, shops, riders, analytics</div></div>
+    <div class="rs-card" onclick="enterRole('ops')"><div class="rs-card-ic">📋</div><div class="rs-card-name">Operations</div><div class="rs-card-desc">Live orders, dispatch, issue resolution</div></div>
+  </div>
+  <div class="rs-link">Customer / Shop / Rider portal → <a onclick="window.location.href='index.html'">Open Main Portal</a></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="topbar">
+    <div class="tb-logo" onclick="goHome()">TryN<em>Fits</em></div>
+    <span id="tb-role" class="tb-role"></span>
+    <div class="tb-spacer"></div>
+    <div class="tb-live"><div class="tb-live-dot"></div><span>Live</span></div>
+    <div class="tb-curr-wrap" style="margin-left:12px">
+      <button class="tb-curr on" onclick="appCurr('INR',this)">₹</button>
+      <button class="tb-curr" onclick="appCurr('NGN',this)">₦</button>
+    </div>
+    <button class="tb-switch" style="margin-left:8px" onclick="goHome()">Switch</button>
+  </div>
+  <div id="layout">
+    <div id="sidebar"></div>
+    <div id="content"></div>
+  </div>
+  <div id="bot-nav"><div class="bn-row" id="bn-row"></div></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MODAL -->
+<div class="ovl" id="ovl" onclick="closeMdl(event)">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<!-- CONFIRM -->
+<div class="conf-ovl" id="conf-ovl">
+  <div class="conf-box">
+    <div class="conf-title" id="conf-title"></div>
+    <div class="conf-msg" id="conf-msg"></div>
+    <div class="conf-btns">
+      <button class="btn btn-o btn-sm" onclick="closeConf()">Cancel</button>
+      <button class="btn btn-d btn-sm" id="conf-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* === SHARED STATE === */
+let currency='INR', role=null, page=null;
+
+const S={
+  cfg:{depositINR:49,depositNGN:1000,delivINR:49,delivNGN:500,tryMins:45,maxItems:3,commPct:11,zones:['Zone A','Zone B','Zone C','Zone A (Lagos)'],city:'Chennai & Lagos'},
+  shops:[
+    {id:'SH1',name:'Silk Route Sarees',owner:'Mrs. Meena Kumari',phone:'+91 98400 11111',loc:'T.Nagar, Chennai',zone:'Zone A',cat:'Ethnic Wear',status:'Active',rating:4.8,orders:124,comm:11,joined:'Jan 2025',desc:'Premium silk sarees from Kanchipuram weavers.'},
+    {id:'SH2',name:'Trend Avenue',owner:'Mr. Ravi Shankar',phone:'+91 98400 22222',loc:'Nungambakkam, Chennai',zone:'Zone A',cat:'Western Wear',status:'Active',rating:4.6,orders:89,comm:10,joined:'Feb 2025',desc:'Contemporary western wear.'},
+    {id:'SH3',name:'Ethnic Elegance',owner:'Mrs. Priya Iyer',phone:'+91 98400 33333',loc:'Anna Nagar, Chennai',zone:'Zone B',cat:'Ethnic Wear',status:'Active',rating:4.7,orders:67,comm:11,joined:'Feb 2025',desc:'Traditional Indian wear.'},
+    {id:'SH4',name:'The Style Hub',owner:'Mr. Karthik R',phone:'+91 98400 44444',loc:'Velachery, Chennai',zone:'Zone C',cat:'Casual Wear',status:'Pending',rating:0,orders:0,comm:10,joined:'Mar 2025',desc:'Trendy casual wear.'},
+    {id:'SH5',name:'Lagos Lace House',owner:'Mrs. Adaeze Obi',phone:'+234 801 55555',loc:'Lekki Phase 1, Lagos',zone:'Zone A (Lagos)',cat:'African Wear',status:'Active',rating:4.9,orders:43,comm:12,joined:'Mar 2025',desc:'Premium Ankara and George fabric.'},
+    {id:'SH6',name:'Velvet & Vine',owner:'Ms. Fatima Bello',phone:'+234 802 66666',loc:'Victoria Island, Lagos',zone:'Zone A (Lagos)',cat:'Western Wear',status:'Pending',rating:0,orders:0,comm:11,joined:'Mar 2025',desc:'Modern Nigerian fashion.'},
+  ],
+  products:[
+    {id:'P1',sid:'SH1',name:'Kanjivaram Silk Saree',emoji:'👘',cat:'Sarees',INR:3200,NGN:64000,sizes:['Free Size'],stock:4,on:true,mat:'Pure Silk',desc:'Traditional Kanjivaram with gold zari border.'},
+    {id:'P2',sid:'SH1',name:'Designer Anarkali Set',emoji:'👗',cat:'Salwar',INR:1850,NGN:37000,sizes:['XS','S','M','L','XL'],stock:6,on:true,mat:'Cotton Silk',desc:'Embroidered Anarkali with dupatta.'},
+    {id:'P3',sid:'SH2',name:'Floral Wrap Dress',emoji:'👗',cat:'Dresses',INR:1200,NGN:24000,sizes:['XS','S','M','L','XL','XXL'],stock:8,on:true,mat:'Rayon',desc:'Breezy summer floral wrap dress.'},
+    {id:'P4',sid:'SH2',name:'Formal Co-ord Set',emoji:'👚',cat:'Co-ords',INR:2100,NGN:42000,sizes:['S','M','L','XL'],stock:5,on:true,mat:'Linen',desc:'Office-ready linen co-ord.'},
+    {id:'P5',sid:'SH3',name:'Pattu Pavadai (Kids)',emoji:'👘',cat:'Kids',INR:1400,NGN:28000,sizes:['2Y','4Y','6Y','8Y','10Y'],stock:3,on:true,mat:'Silk',desc:'Traditional Pattu Pavadai.'},
+    {id:'P6',sid:'SH3',name:'Churidar Kurta Set',emoji:'👗',cat:'Salwar',INR:980,NGN:19600,sizes:['XS','S','M','L','XL','XXL'],stock:7,on:true,mat:'Cotton',desc:'Daily wear churidar.'},
+    {id:'P7',sid:'SH5',name:'Ankara Print Dress',emoji:'👗',cat:'African Wear',INR:2800,NGN:56000,sizes:['S','M','L','XL','XXL'],stock:5,on:true,mat:'Cotton',desc:'Bold Ankara print A-line dress.'},
+    {id:'P8',sid:'SH5',name:'George Lace Blouse',emoji:'👚',cat:'Aso-ebi',INR:3500,NGN:70000,sizes:['S','M','L','XL'],stock:3,on:true,mat:'George Lace',desc:'Premium George lace blouse.'},
+  ],
+  customers:[
+    {id:'C1',name:'Deepa Ramachandran',phone:'+91 98765 43210',email:'deepa@email.com',area:'T.Nagar',zone:'Zone A',orders:7,spentINR:12400,spentNGN:248000,rating:4.9,joined:'Jan 2025'},
+    {id:'C2',name:'Ananya Krishnan',phone:'+91 87654 32109',email:'ananya@email.com',area:'Nungambakkam',zone:'Zone A',orders:4,spentINR:6800,spentNGN:136000,rating:4.7,joined:'Feb 2025'},
+    {id:'C3',name:'Amara Okonkwo',phone:'+234 802 12345',email:'amara@email.com',area:'Lekki',zone:'Zone A (Lagos)',orders:3,spentINR:8200,spentNGN:164000,rating:5.0,joined:'Mar 2025'},
+    {id:'C4',name:'Priya Sundaram',phone:'+91 97654 32100',email:'priya@email.com',area:'Anna Nagar',zone:'Zone B',orders:2,spentINR:3200,spentNGN:64000,rating:4.8,joined:'Mar 2025'},
+  ],
+  orders:[
+    {id:'TF-1021',cid:'C1',sid:'SH1',items:[{pid:'P1',sz:'Free Size'},{pid:'P2',sz:'M'}],status:'Try in Progress',rid:'R1',ordered:'2025-03-11T09:00:00',tryStarted:'2025-03-11T10:15:00',kept:[],returned:[],addr:'42, Anna Nagar West',pay:'UPI'},
+    {id:'TF-1020',cid:'C2',sid:'SH2',items:[{pid:'P3',sz:'S'},{pid:'P4',sz:'S'}],status:'Completed',rid:'R2',ordered:'2025-03-11T07:30:00',tryStarted:'2025-03-11T08:45:00',kept:['P3'],returned:['P4'],addr:'18, Nungambakkam High Road',pay:'Card'},
+    {id:'TF-1019',cid:'C1',sid:'SH3',items:[{pid:'P6',sz:'M'}],status:'Delivered',rid:'R1',ordered:'2025-03-11T11:00:00',tryStarted:null,kept:[],returned:[],addr:'42, Anna Nagar West',pay:'Cash'},
+    {id:'TF-1018',cid:'C3',sid:'SH5',items:[{pid:'P7',sz:'L'}],status:'Placed',rid:null,ordered:'2025-03-11T12:00:00',tryStarted:null,kept:[],returned:[],addr:'14B Admiralty Way, Lekki',pay:'Paystack'},
+  ],
+  riders:[
+    {id:'R1',name:'Murugan S',phone:'+91 99001 11111',zone:'Zone A',status:'On Delivery',trips:6,rating:4.8,earnINR:480,earnNGN:9600,vehicle:'Bike',kyc:true},
+    {id:'R2',name:'Vijay K',phone:'+91 99001 22222',zone:'Zone A',status:'Available',trips:9,rating:4.9,earnINR:720,earnNGN:14400,vehicle:'Bike',kyc:true},
+    {id:'R3',name:'Raman T',phone:'+91 99001 33333',zone:'Zone B',status:'Available',trips:4,rating:4.6,earnINR:320,earnNGN:6400,vehicle:'Bike',kyc:true},
+    {id:'R4',name:'Chidi Obi',phone:'+234 803 44444',zone:'Zone A (Lagos)',status:'Available',trips:12,rating:4.7,earnINR:960,earnNGN:19200,vehicle:'Bike',kyc:true},
+    {id:'R5',name:'Emeka Nwosu',phone:'+234 803 55555',zone:'Zone A (Lagos)',status:'Offline',trips:3,rating:4.5,earnINR:240,earnNGN:4800,vehicle:'Bike',kyc:false},
+  ],
+  feed:[
+    {color:'#0B6E68',text:'TF-1021 picked up by Murugan — en route to customer',time:'12 mins ago'},
+    {color:'#C17F24',text:'Deepa Ramachandran trying 2 items from Silk Route Sarees',time:'18 mins ago'},
+    {color:'#3D6B5C',text:'TF-1020 complete — Ananya kept Floral Wrap Dress',time:'1h ago'},
+    {color:'#1D6FAD',text:"New shop 'Velvet & Vine' applied — review pending",time:'2h ago'},
+    {color:'#B5294E',text:'45-min window expiring soon — TF-1019 alert sent',time:'5h ago'},
+    {color:'#0B6E68',text:'Chidi Obi went online — Lagos Zone A now covered',time:'6h ago'},
+  ],
+};
+
+/* === HELPERS === */
+const $=id=>document.getElementById(id);
+const fmt=v=>v==null?'':(currency==='INR'?'₹':'₦')+Number(v).toLocaleString();
+const fmtAmt=(inr,ngn)=>fmt(currency==='INR'?inr:ngn);
+const fmtP=p=>fmt(currency==='INR'?p.INR:p.NGN);
+const dep=()=>fmt(currency==='INR'?S.cfg.depositINR:S.cfg.depositNGN);
+const gP=id=>S.products.find(p=>p.id===id);
+const gS=id=>S.shops.find(s=>s.id===id);
+const gR=id=>S.riders.find(r=>r.id===id);
+const gC=id=>S.customers.find(c=>c.id===id);
+const ini=s=>s?s.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase():'?';
+const avc=n=>['#0B6E68','#C17F24','#B5294E','#1D6FAD','#3D6B5C','#7C3AED'][(n?n.charCodeAt(0):0)%6];
+const sbdg=s=>({'Active':'bdg-teal','Pending':'bdg-amber','Offline':'bdg-gray','Suspended':'bdg-rose','Delivered':'bdg-sky','Try in Progress':'bdg-amber','Completed':'bdg-teal','Placed':'bdg-gray','Picked Up':'bdg-sky','Returning':'bdg-rose','Available':'bdg-teal','On Delivery':'bdg-sky'}[s]||'bdg-gray');
+const gmv=o=>o.kept.reduce((s,pid)=>{const p=gP(pid);return s+(p?(currency==='INR'?p.INR:p.NGN):0);},0);
+const pendingShops=()=>S.shops.filter(s=>s.status==='Pending').length;
+const liveOrders=()=>S.orders.filter(o=>!['Completed'].includes(o.status));
+const issues=()=>S.orders.filter(o=>o.status==='Try in Progress'&&o.tryStarted&&((Date.now()-new Date(o.tryStarted).getTime())/60000)>(S.cfg.tryMins-5));
+
+/* === TOAST === */
+let tt;
+function toast(msg,ms=3000){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),ms);}
+
+/* === MODAL === */
+function openMdl(html,title=''){$('modal-box').innerHTML=`<div class="modal-hd"><div class="modal-title">${title}</div><div class="modal-close" onclick="closeMdlF()">✕</div></div>${html}`;$('ovl').classList.add('open');}
+function closeMdl(e){if(e&&e.target!==$('ovl'))return;$('ovl').classList.remove('open');}
+function closeMdlF(){$('ovl').classList.remove('open');}
+
+/* === CONFIRM === */
+function confirm2(title,msg,cb,danger=true){
+  $('conf-title').textContent=title;$('conf-msg').textContent=msg;
+  const btn=$('conf-ok');btn.className=`btn btn-sm ${danger?'btn-d':'btn-p'}`;btn.textContent='Confirm';
+  btn.onclick=()=>{cb();closeConf();};$('conf-ovl').classList.add('open');
+}
+function closeConf(){$('conf-ovl').classList.remove('open');}
+
+/* === CURRENCY === */
+function pickCurr(c,btn){currency=c;document.querySelectorAll('.rs-curr-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function appCurr(c,btn){currency=c;document.querySelectorAll('.tb-curr').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPg(page);}
+
+/* === ROLE / NAV === */
+const navCfg={
+  admin:{label:'Admin',nav:[
+    {id:'ad-overview',ic:'📊',l:'Overview'},
+    {id:'ad-shops',ic:'🏪',l:'Shops'},
+    {id:'ad-products',ic:'👗',l:'Products'},
+    {id:'ad-orders',ic:'📦',l:'Orders'},
+    {id:'ad-riders',ic:'🏍️',l:'Riders'},
+    {id:'ad-customers',ic:'👥',l:'Customers'},
+    {id:'ad-config',ic:'⚙️',l:'Config'},
+  ]},
+  ops:{label:'Operations',nav:[
+    {id:'op-live',ic:'⚡',l:'Live Monitor'},
+    {id:'op-issues',ic:'⚠️',l:'Issues'},
+    {id:'op-dispatch',ic:'🏍️',l:'Dispatch'},
+    {id:'op-sop',ic:'📋',l:'SOP'},
+  ]},
+};
+
+function enterRole(r){
+  role=r;$('role-screen').style.display='none';$('app').classList.add('show');
+  $('tb-role').textContent=navCfg[r].label;buildNav(r);
+  goToPage(navCfg[r].nav[0].id);
+}
+function goHome(){$('role-screen').style.display='flex';$('app').classList.remove('show');role=null;page=null;}
+
+function buildNav(r){
+  const items=navCfg[r].nav;
+  const sb=$('sidebar');
+  sb.innerHTML=`<div class="sb-grp">${navCfg[r].label}</div>`;
+  items.forEach(it=>{
+    let bdg='';
+    if(it.id==='ad-shops'&&pendingShops()>0)bdg=`<span class="sb-bdg-amber">${pendingShops()}</span>`;
+    if(it.id==='op-issues'&&issues().length>0)bdg=`<span class="sb-bdg">${issues().length}</span>`;
+    sb.innerHTML+=`<button class="sb-item" id="sb-${it.id}" onclick="goToPage('${it.id}')"><span class="sb-ic">${it.ic}</span>${it.l}${bdg}</button>`;
+  });
+  sb.innerHTML+=`<div class="sb-div"></div><div class="sb-bottom"><a href="index.html"><span>🔗</span>Customer Portal</a></div>`;
+  const bn=$('bn-row');
+  bn.innerHTML=items.slice(0,5).map(it=>{
+    let dot='';
+    if(it.id==='ad-shops'&&pendingShops()>0)dot=`<span class="bn-dot"></span>`;
+    if(it.id==='op-issues'&&issues().length>0)dot=`<span class="bn-dot"></span>`;
+    return`<button class="bn-btn" id="bn-${it.id}" onclick="goToPage('${it.id}')"><span class="bn-ic">${it.ic}${dot}</span><span class="bn-lbl">${it.l}</span></button>`;
+  }).join('');
+}
+
+function goToPage(pid){
+  page=pid;
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.bn-btn').forEach(el=>el.classList.remove('on'));
+  const s=$('sb-'+pid),b=$('bn-'+pid);if(s)s.classList.add('on');if(b)b.classList.add('on');
+  renderPg(pid);$('content').scrollTop=0;
+}
+
+function renderPg(pid){
+  const map={
+    'ad-overview':rOverview,'ad-shops':rShops,'ad-products':rProds,'ad-orders':rOrders,
+    'ad-riders':rRiders,'ad-customers':rCustomers,'ad-config':rConfig,
+    'op-live':rLive,'op-issues':rIssues,'op-dispatch':rDispatch,'op-sop':rSop,
+  };
+  if(map[pid]){$('content').innerHTML=`<div class="page on">${map[pid]()}</div>`;afterRender(pid);}
+}
+function afterRender(pid){if(pid==='ad-overview')animateBars();}
+
+/* === ADMIN — OVERVIEW === */
+function rOverview(){
+  const completed=S.orders.filter(o=>o.status==='Completed');
+  const totalGmv=completed.reduce((s,o)=>s+gmv(o),0);
+  const totalComm=Math.round(totalGmv*S.cfg.commPct/100);
+  const live=liveOrders();
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Platform Overview</div><div class="pg-sub">${S.cfg.city} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div>
+      <span class="bdg bdg-teal" style="font-size:12px">● System Live</span>
+    </div>
+    <div class="g4">
+      <div class="card kpi" style="--kc:var(--teal)" data-ic="📈"><div class="kpi-l">Total GMV</div><div class="kpi-v">${fmt(totalGmv)}</div><div class="kpi-n up">↑ ${S.orders.length} orders</div></div>
+      <div class="card kpi" style="--kc:var(--amber)" data-ic="💰"><div class="kpi-l">Commission</div><div class="kpi-v">${fmt(totalComm)}</div><div class="kpi-n neu">${S.cfg.commPct}% of GMV</div></div>
+      <div class="card kpi" style="--kc:var(--sky)" data-ic="🏪"><div class="kpi-l">Active Shops</div><div class="kpi-v">${S.shops.filter(s=>s.status==='Active').length}</div><div class="kpi-n neu">${pendingShops()} pending</div></div>
+      <div class="card kpi" style="--kc:var(--rose)" data-ic="⚡"><div class="kpi-l">Live Orders</div><div class="kpi-v">${live.length}</div><div class="kpi-n ${live.length>0?'up':'neu'}">${live.filter(o=>o.status==='Try in Progress').length} in try</div></div>
+    </div>
+    <div class="g21">
+      <div>
+        <div class="card mb14">
+          <div class="cd-hd"><div class="cd-title">Weekly Revenue</div></div>
+          <div style="padding:14px 15px">
+            <div class="chart-bars" id="admin-bars">${Array(8).fill('<div class="chart-bar" style="height:0"></div>').join('')}</div>
+            <div class="chart-labels">${['W1','W2','W3','W4','W5','W6','W7','W8'].map(w=>`<div class="chart-lbl">${w}</div>`).join('')}</div>
+          </div>
+        </div>
+        <div class="card mb14">
+          <div class="cd-hd"><div class="cd-title">All Orders</div><button class="btn btn-g btn-sm" onclick="goToPage('ad-orders')">View All →</button></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Order</th><th>Shop</th><th>Status</th><th class="tbl-hide">Customer</th><th class="tbl-hide">Rider</th></tr></thead>
+              <tbody>${S.orders.map(o=>`<tr class="tbl-row" onclick="showOrderMdl('${o.id}')">
+                <td><span style="font-weight:700;color:var(--teal);font-size:12px">${o.id}</span></td>
+                <td style="font-size:12px">${gS(o.sid)?.name||'—'}</td>
+                <td><span class="bdg ${sbdg(o.status)}">${o.status}</span></td>
+                <td class="tbl-hide" style="font-size:12px;color:var(--ink3)">${gC(o.cid)?.name||'—'}</td>
+                <td class="tbl-hide" style="font-size:12px;color:var(--ink3)">${gR(o.rid)?.name||'Unassigned'}</td>
+              </tr>`).join('')}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card mb14">
+          <div class="cd-hd"><div class="cd-title">Activity Feed</div></div>
+          ${S.feed.map(f=>`<div class="feed-item"><div class="feed-dot" style="background:${f.color}"></div><div><div class="feed-text">${f.text}</div><div class="feed-time">${f.time}</div></div></div>`).join('')}
+        </div>
+        <div class="card" style="padding:15px">
+          <div class="cd-title" style="margin-bottom:11px">Platform Stats</div>
+          <div class="irow"><span class="irow-l">Total Orders</span><span class="irow-v">${S.orders.length}</span></div>
+          <div class="irow"><span class="irow-l">Active Shops</span><span class="irow-v">${S.shops.filter(s=>s.status==='Active').length}</span></div>
+          <div class="irow"><span class="irow-l">Riders</span><span class="irow-v">${S.riders.length} registered</span></div>
+          <div class="irow"><span class="irow-l">Customers</span><span class="irow-v">${S.customers.length}</span></div>
+          <div class="irow"><span class="irow-l">Products Listed</span><span class="irow-v">${S.products.filter(p=>p.on).length} active</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function animateBars(){const heights=[18,28,42,35,55,48,62,74];setTimeout(()=>{document.querySelectorAll('.chart-bar').forEach((b,i)=>b.style.height=heights[i]+'%');},150);}
+
+/* === ADMIN — SHOPS (full CRUD) === */
+function rShops(){
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Shop Management</div><div class="pg-sub">${S.shops.length} shops · ${pendingShops()} pending approval</div></div>
+      <button class="btn btn-p btn-sm" onclick="openAddShopMdl()">+ Add Shop</button>
+    </div>
+    ${pendingShops()>0?`<div class="alert a-amber"><span class="a-ic">⚠️</span><span>${pendingShops()} shop(s) awaiting approval</span></div>`:''}
+    <div class="chips" id="shop-chips">
+      <button class="chip on" onclick="filterShops('all',this)">All (${S.shops.length})</button>
+      <button class="chip" onclick="filterShops('Active',this)">Active (${S.shops.filter(s=>s.status==='Active').length})</button>
+      <button class="chip" onclick="filterShops('Pending',this)">Pending (${pendingShops()})</button>
+      <button class="chip" onclick="filterShops('Suspended',this)">Suspended (${S.shops.filter(s=>s.status==='Suspended').length})</button>
+    </div>
+    <div id="shops-list">${rShopCards(S.shops)}</div>
+  `;
+}
+function filterShops(f,btn){
+  document.querySelectorAll('.chips .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const list=f==='all'?S.shops:S.shops.filter(s=>s.status===f);
+  $('shops-list').innerHTML=rShopCards(list);
+}
+function rShopCards(shops){
+  if(!shops.length)return`<div class="empty"><div class="empty-ic">🏪</div><div class="empty-t">No shops found</div></div>`;
+  return shops.map(sh=>`
+    <div class="card mb10" style="padding:15px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700">${sh.name}</div>
+        <span class="bdg ${sbdg(sh.status)}">${sh.status}</span>
+      </div>
+      <div class="irow"><span class="irow-l">Owner</span><span class="irow-v">${sh.owner}</span></div>
+      <div class="irow"><span class="irow-l">Location</span><span class="irow-v">${sh.loc}</span></div>
+      <div class="irow"><span class="irow-l">Category · Zone</span><span class="irow-v">${sh.cat} · ${sh.zone}</span></div>
+      <div class="irow"><span class="irow-l">Commission</span><span class="irow-v">${sh.comm}%</span></div>
+      ${sh.status==='Active'?`<div class="irow"><span class="irow-l">Rating · Orders</span><span class="irow-v">⭐ ${sh.rating} · ${sh.orders} orders</span></div>`:''}
+      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="openEditShopMdl('${sh.id}')">✏️ Edit</button>
+        ${sh.status==='Pending'?`<button class="btn btn-p btn-sm" onclick="approveShop('${sh.id}')">✓ Approve</button><button class="btn btn-d btn-sm" onclick="rejectShop('${sh.id}')">✕ Reject</button>`:''}
+        ${sh.status==='Active'?`<button class="btn btn-o btn-sm" onclick="suspendShop('${sh.id}')">⏸ Suspend</button>`:''}
+        ${sh.status==='Suspended'?`<button class="btn btn-p btn-sm" onclick="approveShop('${sh.id}')">▶ Reactivate</button>`:''}
+        <button class="btn btn-g btn-sm" onclick="confirm2('Delete Shop','Permanently delete ${sh.name}?',()=>{S.shops=S.shops.filter(s=>s.id!=='${sh.id}');toast('Shop deleted');goToPage('ad-shops');})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+function approveShop(id){const sh=S.shops.find(s=>s.id===id);if(sh){sh.status='Active';toast(`✓ ${sh.name} approved`);goToPage('ad-shops');}}
+function rejectShop(id){confirm2('Reject Shop','This will reject and suspend the shop application.',()=>{const sh=S.shops.find(s=>s.id===id);if(sh){sh.status='Suspended';toast('Shop rejected');goToPage('ad-shops');}});}
+function suspendShop(id){confirm2('Suspend Shop','This hides the shop and all their products.',()=>{const sh=S.shops.find(s=>s.id===id);if(sh){sh.status='Suspended';toast('Shop suspended');goToPage('ad-shops');}});}
+
+function shopFormHTML(sh=null){
+  return `<div class="modal-body">
+    <div class="frow"><div class="fld"><label>Shop Name <span class="req">*</span></label><input id="sf-n" value="${sh?.name||''}" placeholder="Boutique name"/></div><div class="fld"><label>Category</label><select id="sf-c">${['Ethnic Wear','Western Wear','Casual Wear','Kids Wear','African Wear','Aso-ebi','Accessories'].map(c=>`<option ${sh?.cat===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
+    <div class="frow"><div class="fld"><label>Owner Name <span class="req">*</span></label><input id="sf-o" value="${sh?.owner||''}" placeholder="Full name"/></div><div class="fld"><label>Phone <span class="req">*</span></label><input id="sf-p" value="${sh?.phone||''}" placeholder="+91 or +234..."/></div></div>
+    <div class="fld"><label>Location</label><input id="sf-l" value="${sh?.loc||''}" placeholder="Area, City"/></div>
+    <div class="frow"><div class="fld"><label>Zone</label><select id="sf-z">${S.cfg.zones.map(z=>`<option ${sh?.zone===z?'selected':''}>${z}</option>`).join('')}</select></div><div class="fld"><label>Commission (%)</label><input id="sf-cm" type="number" value="${sh?.comm||11}" min="5" max="20"/></div></div>
+    ${sh?`<div class="fld"><label>Status</label><select id="sf-st"><option ${sh.status==='Active'?'selected':''}>Active</option><option ${sh.status==='Pending'?'selected':''}>Pending</option><option ${sh.status==='Suspended'?'selected':''}>Suspended</option></select></div>`:''}
+    <div class="fld"><label>Description</label><textarea id="sf-d">${sh?.desc||''}</textarea></div>
+    <div class="fsec">Shop Logo</div>
+    <div class="img-upload-zone"><input type="file" accept="image/*" onchange="handleShopImg(event)"/>
+      <div class="img-upload-zone-ic">📷</div><div class="img-upload-zone-txt">Upload shop logo</div>
+    </div>
+    <div id="shop-img-prev" style="margin-top:8px">${sh?.logo?`<img src="${sh.logo}" style="width:70px;height:70px;border-radius:var(--r8);object-fit:cover"/>`:''}</div>
+  </div>`;
+}
+function handleShopImg(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{$('shop-img-prev').innerHTML=`<img src="${e.target.result}" style="width:70px;height:70px;border-radius:var(--r8);object-fit:cover"/>`;$('shop-img-prev')._logo=e.target.result;toast('Logo uploaded ✓');};r.readAsDataURL(f);}
+
+function openAddShopMdl(){openMdl(`${shopFormHTML()}<div class="modal-foot"><button class="btn btn-o" onclick="closeMdlF()">Cancel</button><button class="btn btn-p" onclick="saveNewShop()">Add Shop</button></div>`,'🏪 Add New Shop');}
+function saveNewShop(){
+  const n=$('sf-n')?.value.trim(),o=$('sf-o')?.value.trim(),p=$('sf-p')?.value.trim();
+  if(!n||!o||!p){toast('Name, owner and phone required');return;}
+  const logo=$('shop-img-prev')?._logo||null;
+  S.shops.push({id:'SH'+Date.now(),name:n,owner:o,phone:p,loc:$('sf-l')?.value.trim()||'TBD',zone:$('sf-z')?.value,cat:$('sf-c')?.value,comm:parseInt($('sf-cm')?.value||11),desc:$('sf-d')?.value.trim()||'',status:'Pending',rating:0,orders:0,joined:new Date().toLocaleDateString('en-GB',{month:'short',year:'numeric'}),logo});
+  closeMdlF();toast(`✓ "${n}" added — pending approval`);goToPage('ad-shops');
+}
+function openEditShopMdl(id){const sh=S.shops.find(s=>s.id===id);if(!sh)return;openMdl(`${shopFormHTML(sh)}<div class="modal-foot"><button class="btn btn-o" onclick="closeMdlF()">Cancel</button><button class="btn btn-p" onclick="saveEditShop('${id}')">Save Changes</button></div>`,`✏️ Edit: ${sh.name}`);}
+function saveEditShop(id){
+  const sh=S.shops.find(s=>s.id===id);if(!sh)return;
+  sh.name=$('sf-n').value.trim()||sh.name;sh.owner=$('sf-o').value.trim()||sh.owner;sh.phone=$('sf-p').value.trim()||sh.phone;
+  sh.loc=$('sf-l').value.trim()||sh.loc;sh.zone=$('sf-z').value;sh.cat=$('sf-c').value;sh.comm=parseInt($('sf-cm').value||sh.comm);
+  sh.desc=$('sf-d').value.trim()||sh.desc;if($('sf-st'))sh.status=$('sf-st').value;
+  const lp=$('shop-img-prev');if(lp?._logo)sh.logo=lp._logo;
+  closeMdlF();toast('Shop updated ✓');goToPage('ad-shops');
+}
+
+/* === ADMIN — PRODUCTS === */
+function rProds(){
+  return `
+    <div class="pg-hd"><div><div class="pg-title">All Products</div><div class="pg-sub">${S.products.length} total · ${S.products.filter(p=>p.on).length} active</div></div></div>
+    <div class="search-bar"><span class="sb-ic">🔍</span><input placeholder="Search by name, shop, category..." oninput="filterProds(this.value)" id="prod-search"/></div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="prod-tbl">
+        <thead><tr><th>Product</th><th>Shop</th><th>Price</th><th>Stock</th><th class="tbl-hide">Category</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="prod-tbody">${rProdRows(S.products)}</tbody>
+      </table>
+    </div>
+  `;
+}
+function rProdRows(prods){
+  return prods.map(p=>{const sh=gS(p.sid);return`<tr class="tbl-row">
+    <td><div style="font-weight:600">${p.emoji} ${p.name}</div><div style="font-size:11px;color:var(--ink4)">${p.mat}</div></td>
+    <td style="font-size:12px">${sh?.name||'—'}</td>
+    <td style="font-weight:700;color:var(--teal)">${fmtP(p)}</td>
+    <td>${p.stock}</td>
+    <td class="tbl-hide" style="font-size:12px">${p.cat}</td>
+    <td><span class="bdg ${p.on?'bdg-teal':'bdg-gray'}">${p.on?'Active':'Hidden'}</span></td>
+    <td><div style="display:flex;gap:5px">
+      <button class="btn btn-o btn-xs" onclick="toggleProdStatus('${p.id}')">${p.on?'Hide':'Show'}</button>
+      <button class="btn btn-g btn-xs" onclick="confirm2('Delete Product','Delete ${p.name}?',()=>{S.products=S.products.filter(x=>x.id!=='${p.id}');toast('Deleted');goToPage('ad-products');})">🗑️</button>
+    </div></td>
+  </tr>`}).join('');
+}
+function filterProds(q){const prods=S.products.filter(p=>!q||p.name.toLowerCase().includes(q.toLowerCase())||p.cat.toLowerCase().includes(q.toLowerCase())||(gS(p.sid)?.name||'').toLowerCase().includes(q.toLowerCase()));const tb=$('prod-tbody');if(tb)tb.innerHTML=rProdRows(prods);}
+function toggleProdStatus(pid){const p=gP(pid);if(p){p.on=!p.on;toast(`"${p.name}" ${p.on?'shown':'hidden'}`);goToPage('ad-products');}}
+
+/* === ADMIN — ORDERS === */
+function rOrders(){
+  return `
+    <div class="pg-hd"><div><div class="pg-title">All Orders</div><div class="pg-sub">${S.orders.length} total orders</div></div></div>
+    <div class="tab-bar">
+      <button class="tab-btn on" onclick="filterOrders('all',this)">All (${S.orders.length})</button>
+      <button class="tab-btn" onclick="filterOrders('live',this)">Live (${liveOrders().length})</button>
+      <button class="tab-btn" onclick="filterOrders('Completed',this)">Completed (${S.orders.filter(o=>o.status==='Completed').length})</button>
+    </div>
+    <div id="ord-list">${rOrderCards(S.orders)}</div>
+  `;
+}
+function filterOrders(f,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  let o=S.orders;if(f==='live')o=liveOrders();else if(f!=='all')o=o.filter(x=>x.status===f);
+  $('ord-list').innerHTML=rOrderCards(o);
+}
+function rOrderCards(orders){
+  if(!orders.length)return`<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">No orders</div></div>`;
+  const avRiders=S.riders.filter(r=>r.status==='Available');
+  return orders.map(o=>{
+    const sh=gS(o.sid),c=gC(o.cid),r=gR(o.rid);
+    return`<div class="card mb10" style="padding:15px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span style="font-weight:700;color:var(--teal);cursor:pointer" onclick="showOrderMdl('${o.id}')">${o.id}</span>
+        <span class="bdg ${sbdg(o.status)}">${o.status}</span>
+      </div>
+      <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${c?.name||'—'}</span></div>
+      <div class="irow"><span class="irow-l">Shop</span><span class="irow-v">${sh?.name||'—'}</span></div>
+      <div class="irow"><span class="irow-l">Rider</span><span class="irow-v">${r?.name||'Unassigned'}</span></div>
+      <div class="irow"><span class="irow-l">Items · Payment</span><span class="irow-v">${o.items.length} items · ${o.pay}</span></div>
+      ${o.status==='Completed'?`<div class="irow"><span class="irow-l">GMV</span><span class="irow-v" style="color:var(--teal)">${fmt(gmv(o))}</span></div>`:''}
+      ${!o.rid&&o.status==='Placed'?`<div style="margin-top:9px"><select onchange="assignRider('${o.id}',this.value)" style="width:100%;padding:8px;border-radius:var(--r8);border:1px solid var(--ink5);font-size:13px;background:var(--white)"><option value="">Assign rider...</option>${avRiders.map(r=>`<option value="${r.id}">${r.name} — ${r.zone}</option>`).join('')}</select></div>`:''}
+      <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="showOrderMdl('${o.id}')">View Details</button>
+        ${o.status!=='Completed'?`<button class="btn btn-g btn-sm" onclick="updOrderStatus('${o.id}','Completed')">✓ Mark Complete</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function assignRider(oid,rid){if(!rid)return;const o=S.orders.find(o=>o.id===oid),r=S.riders.find(r=>r.id===rid);if(o)o.rid=rid;if(r)r.status='On Delivery';toast(`${r?.name} assigned ✓`);goToPage('ad-orders');}
+function updOrderStatus(oid,st){const o=S.orders.find(o=>o.id===oid);if(o){o.status=st;toast('Order updated ✓');goToPage('ad-orders');}}
+function showOrderMdl(oid){
+  const o=S.orders.find(o=>o.id===oid);if(!o)return;
+  const sh=gS(o.sid),c=gC(o.cid),r=gR(o.rid);
+  openMdl(`<div class="modal-body">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <span style="font-weight:700;color:var(--teal);font-size:16px">${o.id}</span>
+      <span class="bdg ${sbdg(o.status)}">${o.status}</span>
+    </div>
+    <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${c?.name} · ${c?.phone}</span></div>
+    <div class="irow"><span class="irow-l">Shop</span><span class="irow-v">${sh?.name}</span></div>
+    <div class="irow"><span class="irow-l">Rider</span><span class="irow-v">${r?.name||'Unassigned'}</span></div>
+    <div class="irow"><span class="irow-l">Address</span><span class="irow-v">${o.addr}</span></div>
+    <div class="irow"><span class="irow-l">Payment</span><span class="irow-v">${o.pay}</span></div>
+    <div class="irow"><span class="irow-l">Ordered</span><span class="irow-v">${new Date(o.ordered).toLocaleString()}</span></div>
+    <div class="fsec">Items</div>
+    ${o.items.map(i=>{const p=gP(i.pid);return p?`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="font-size:24px">${p.emoji}</div><div style="flex:1"><div style="font-weight:600">${p.name}</div><div style="font-size:12px;color:var(--ink4)">Size: ${i.sz} · ${fmtP(p)}</div></div>${o.kept.includes(i.pid)?`<span class="bdg bdg-teal">Kept</span>`:o.returned?.includes(i.pid)?`<span class="bdg bdg-gray">Returned</span>`:''}</div>`:''}).join('')}
+    ${o.status==='Completed'?`<div style="margin-top:10px"><div class="irow"><span class="irow-l" style="font-weight:700">Total GMV</span><span class="irow-v" style="font-size:16px;color:var(--teal)">${fmt(gmv(o))}</span></div></div>`:''}
+  </div>
+  <div class="modal-foot"><button class="btn btn-o" onclick="closeMdlF()">Close</button></div>`,`Order — ${o.id}`);
+}
+
+/* === ADMIN — RIDERS (full CRUD) === */
+function rRiders(){
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Riders</div><div class="pg-sub">${S.riders.length} registered · ${S.riders.filter(r=>r.status==='Available').length} available now</div></div>
+      <button class="btn btn-p btn-sm" onclick="openAddRiderMdl()">+ Add Rider</button>
+    </div>
+    <div class="chips">
+      <button class="chip on" onclick="filterRiders('all',this)">All</button>
+      <button class="chip" onclick="filterRiders('Available',this)">Available</button>
+      <button class="chip" onclick="filterRiders('On Delivery',this)">On Delivery</button>
+      <button class="chip" onclick="filterRiders('Offline',this)">Offline</button>
+    </div>
+    <div class="g2" id="rider-grid">${rRiderCards(S.riders)}</div>
+  `;
+}
+function filterRiders(f,btn){
+  document.querySelectorAll('.chips .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const list=f==='all'?S.riders:S.riders.filter(r=>r.status===f);
+  $('rider-grid').innerHTML=rRiderCards(list);
+}
+function rRiderCards(riders){
+  return riders.map(r=>`
+    <div class="card" style="padding:14px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:11px">
+        <div class="av" style="width:38px;height:38px;background:${avc(r.name)}22;color:${avc(r.name)};font-size:13px">${ini(r.name)}</div>
+        <div style="flex:1"><div style="font-weight:600;font-size:13px">${r.name}</div><div style="font-size:11px;color:var(--ink4)">${r.zone}</div></div>
+        <span class="bdg ${sbdg(r.status)}">${r.status}</span>
+      </div>
+      <div class="irow"><span class="irow-l">Trips</span><span class="irow-v">${r.trips}</span></div>
+      <div class="irow"><span class="irow-l">Rating</span><span class="irow-v">⭐ ${r.rating}</span></div>
+      <div class="irow"><span class="irow-l">Earnings</span><span class="irow-v" style="color:var(--teal)">${fmtAmt(r.earnINR,r.earnNGN)}</span></div>
+      <div class="irow"><span class="irow-l">KYC</span><span class="irow-v"><span class="bdg ${r.kyc?'bdg-teal':'bdg-amber'}">${r.kyc?'Verified':'Pending'}</span></span></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-o btn-xs" style="flex:1" onclick="openEditRiderMdl('${r.id}')">✏️ Edit</button>
+        <button class="btn btn-g btn-xs" onclick="confirm2('Delete Rider','Remove ${r.name}?',()=>{S.riders=S.riders.filter(x=>x.id!=='${r.id}');toast('Rider removed');goToPage('ad-riders');})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+function riderFormHTML(r=null){
+  return`<div class="modal-body">
+    <div class="frow"><div class="fld"><label>Full Name <span class="req">*</span></label><input id="rf-n" value="${r?.name||''}" placeholder="Rider name"/></div><div class="fld"><label>Phone <span class="req">*</span></label><input id="rf-p" value="${r?.phone||''}" placeholder="+91 or +234..."/></div></div>
+    <div class="frow"><div class="fld"><label>Zone</label><select id="rf-z">${S.cfg.zones.map(z=>`<option ${r?.zone===z?'selected':''}>${z}</option>`).join('')}</select></div><div class="fld"><label>Vehicle</label><select id="rf-v"><option ${r?.vehicle==='Bike'?'selected':''}>Bike</option><option ${r?.vehicle==='Scooter'?'selected':''}>Scooter</option><option ${r?.vehicle==='Bicycle'?'selected':''}>Bicycle</option></select></div></div>
+    ${r?`<div class="frow"><div class="fld"><label>Status</label><select id="rf-s"><option ${r.status==='Available'?'selected':''}>Available</option><option ${r.status==='On Delivery'?'selected':''}>On Delivery</option><option ${r.status==='Offline'?'selected':''}>Offline</option></select></div><div class="fld"><label>KYC</label><select id="rf-k"><option value="true" ${r.kyc?'selected':''}>Verified</option><option value="false" ${!r.kyc?'selected':''}>Pending</option></select></div></div>`:''}
+    <div class="fsec">Documents</div>
+    <div class="img-upload-zone"><input type="file" accept="image/*" onchange="handleRiderDoc(event)"/>
+      <div class="img-upload-zone-ic">📄</div><div class="img-upload-zone-txt">Upload Aadhaar / NIN photo</div>
+    </div>
+    <div id="rider-doc-prev" style="margin-top:8px"></div>
+  </div>`;
+}
+function handleRiderDoc(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{$('rider-doc-prev').innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--sl);border-radius:var(--r8);font-size:12px;color:var(--sage)">✅ Document uploaded: ${f.name}</div>`;toast('KYC document uploaded ✓');};r.readAsDataURL(f);}
+function openAddRiderMdl(){openMdl(`${riderFormHTML()}<div class="modal-foot"><button class="btn btn-o" onclick="closeMdlF()">Cancel</button><button class="btn btn-p" onclick="saveNewRider()">Add Rider</button></div>`,'🏍️ Add New Rider');}
+function saveNewRider(){
+  const n=$('rf-n')?.value.trim(),p=$('rf-p')?.value.trim();if(!n||!p){toast('Name and phone required');return;}
+  S.riders.push({id:'R'+Date.now(),name:n,phone:p,zone:$('rf-z')?.value||'Zone A',vehicle:$('rf-v')?.value||'Bike',status:'Available',trips:0,rating:5.0,earnINR:0,earnNGN:0,kyc:false});
+  closeMdlF();toast(`✓ ${n} added as rider`);goToPage('ad-riders');
+}
+function openEditRiderMdl(id){const r=S.riders.find(x=>x.id===id);if(!r)return;openMdl(`${riderFormHTML(r)}<div class="modal-foot"><button class="btn btn-o" onclick="closeMdlF()">Cancel</button><button class="btn btn-p" onclick="saveEditRider('${id}')">Save</button></div>`,`✏️ Edit: ${r.name}`);}
+function saveEditRider(id){
+  const r=S.riders.find(x=>x.id===id);if(!r)return;
+  r.name=$('rf-n').value.trim()||r.name;r.phone=$('rf-p').value.trim()||r.phone;r.zone=$('rf-z').value;r.vehicle=$('rf-v').value;
+  if($('rf-s'))r.status=$('rf-s').value;if($('rf-k'))r.kyc=$('rf-k').value==='true';
+  closeMdlF();toast('Rider updated ✓');goToPage('ad-riders');
+}
+
+/* === ADMIN — CUSTOMERS === */
+function rCustomers(){
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Customers</div><div class="pg-sub">${S.customers.length} registered customers</div></div></div>
+    <div class="search-bar"><span class="sb-ic">🔍</span><input placeholder="Search customers..." oninput="filterCusts(this.value)"/></div>
+    <div id="cust-list">
+      ${S.customers.map(c=>`
+        <div class="card mb10" style="padding:15px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <div class="av" style="width:40px;height:40px;background:${avc(c.name)}22;color:${avc(c.name)};font-size:14px">${ini(c.name)}</div>
+            <div style="flex:1"><div style="font-weight:600">${c.name}</div><div style="font-size:11.5px;color:var(--ink4)">${c.email}</div></div>
+            <span class="bdg bdg-sage">⭐ ${c.rating}</span>
+          </div>
+          <div class="irow"><span class="irow-l">Phone</span><span class="irow-v"><a href="tel:${c.phone}">${c.phone}</a></span></div>
+          <div class="irow"><span class="irow-l">Area · Zone</span><span class="irow-v">${c.area} · ${c.zone}</span></div>
+          <div class="irow"><span class="irow-l">Total Orders</span><span class="irow-v">${c.orders}</span></div>
+          <div class="irow"><span class="irow-l">Total Spent</span><span class="irow-v" style="color:var(--teal)">${fmtAmt(c.spentINR,c.spentNGN)}</span></div>
+          <div class="irow"><span class="irow-l">Member Since</span><span class="irow-v">${c.joined}</span></div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+function filterCusts(q){const list=S.customers.filter(c=>!q||c.name.toLowerCase().includes(q.toLowerCase())||c.phone.includes(q)||c.email.includes(q));$('cust-list').innerHTML=list.map(c=>`<div class="card mb10" style="padding:15px"><div style="font-weight:600">${c.name}</div><div style="font-size:12px;color:var(--ink4)">${c.phone} · ${c.area}</div><div style="margin-top:7px"><span class="bdg bdg-teal">${c.orders} orders</span> <span class="bdg bdg-sage">${fmtAmt(c.spentINR,c.spentNGN)} spent</span></div></div>`).join('');}
+
+/* === ADMIN — CONFIG === */
+function rConfig(){
+  const cfg=S.cfg;
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Platform Config</div><div class="pg-sub">Core settings — changes apply immediately</div></div></div>
+    <div class="alert a-amber"><span class="a-ic">⚠️</span><span>These settings affect all live orders. Change with caution.</span></div>
+    <div class="card mb14" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:13px">Try Window & Limits</div>
+      <div class="frow">
+        <div class="fld"><label>Try Window (minutes)</label><input id="cfg-tryMins" type="number" value="${cfg.tryMins}" min="15" max="120"/></div>
+        <div class="fld"><label>Max Items per Try</label><input id="cfg-maxItems" type="number" value="${cfg.maxItems}" min="1" max="10"/></div>
+      </div>
+      <div class="frow">
+        <div class="fld"><label>Platform Commission (%)</label><input id="cfg-commPct" type="number" value="${cfg.commPct}" min="5" max="25"/></div>
+        <div class="fld"><label>City / Coverage</label><input id="cfg-city" value="${cfg.city}"/></div>
+      </div>
+    </div>
+    <div class="card mb14" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:13px">Deposit & Delivery Fees</div>
+      <div class="frow">
+        <div class="fld"><label>Deposit — INR (₹)</label><input id="cfg-depINR" type="number" value="${cfg.depositINR}"/></div>
+        <div class="fld"><label>Deposit — NGN (₦)</label><input id="cfg-depNGN" type="number" value="${cfg.depositNGN}"/></div>
+      </div>
+      <div class="frow">
+        <div class="fld"><label>Delivery Fee — INR (₹)</label><input id="cfg-dlvINR" type="number" value="${cfg.delivINR}"/></div>
+        <div class="fld"><label>Delivery Fee — NGN (₦)</label><input id="cfg-dlvNGN" type="number" value="${cfg.delivNGN}"/></div>
+      </div>
+    </div>
+    <div class="card mb14" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:11px">Delivery Zones</div>
+      <div id="zones-list">${cfg.zones.map((z,i)=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input value="${z}" id="zone-${i}" style="flex:1;padding:8px 10px;border:1px solid var(--ink5);border-radius:var(--r8);font-size:13px"/><button class="btn btn-g btn-xs" onclick="removeZone(${i})">✕</button></div>`).join('')}</div>
+      <button class="btn btn-o btn-sm" onclick="addZone()">+ Add Zone</button>
+    </div>
+    <button class="btn btn-p btn-fw" onclick="saveConfig()">💾 Save All Settings</button>
+  `;
+}
+function saveConfig(){
+  S.cfg.tryMins=parseInt($('cfg-tryMins').value)||S.cfg.tryMins;
+  S.cfg.maxItems=parseInt($('cfg-maxItems').value)||S.cfg.maxItems;
+  S.cfg.commPct=parseInt($('cfg-commPct').value)||S.cfg.commPct;
+  S.cfg.city=$('cfg-city').value.trim()||S.cfg.city;
+  S.cfg.depositINR=parseInt($('cfg-depINR').value)||S.cfg.depositINR;
+  S.cfg.depositNGN=parseInt($('cfg-depNGN').value)||S.cfg.depositNGN;
+  S.cfg.delivINR=parseInt($('cfg-dlvINR').value)||S.cfg.delivINR;
+  S.cfg.delivNGN=parseInt($('cfg-dlvNGN').value)||S.cfg.delivNGN;
+  const zInputs=document.querySelectorAll('[id^="zone-"]');
+  S.cfg.zones=Array.from(zInputs).map(i=>i.value.trim()).filter(Boolean);
+  toast('✅ Config saved — all changes applied');
+}
+function addZone(){S.cfg.zones.push('New Zone');goToPage('ad-config');}
+function removeZone(i){S.cfg.zones.splice(i,1);goToPage('ad-config');}
+
+/* === OPS — LIVE MONITOR === */
+function rLive(){
+  const live=liveOrders();
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Live Order Monitor</div><div class="pg-sub">${live.length} active orders · ${new Date().toLocaleTimeString()}</div></div>
+      <button class="btn btn-p btn-sm" onclick="renderPg('op-live')">🔄 Refresh</button>
+    </div>
+    ${live.length===0?`<div class="empty"><div class="empty-ic">✅</div><div class="empty-t">All clear!</div><div class="empty-s">No active orders right now</div></div>`:
+    live.map(o=>{
+      const sh=gS(o.sid),c=gC(o.cid),r=gR(o.rid);
+      const isUrgent=o.status==='Try in Progress'&&o.tryStarted&&((Date.now()-new Date(o.tryStarted).getTime())/60000)>(S.cfg.tryMins-5);
+      const cls=isUrgent?'urgent':o.status==='Try in Progress'?'active':'ok';
+      return`<div class="live-order ${cls}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+          <span style="font-weight:700;color:var(--teal)">${o.id}</span>
+          <span class="bdg ${sbdg(o.status)}">${isUrgent?'⚠️ ':''} ${o.status}</span>
+        </div>
+        ${isUrgent?`<div class="alert a-red" style="margin-bottom:9px"><span class="a-ic">🚨</span><span>Try window ending soon! Contact customer now.</span></div>`:''}
+        <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${c?.name} · <a href="tel:${c?.phone}" style="color:var(--teal)">${c?.phone}</a></span></div>
+        <div class="irow"><span class="irow-l">Shop</span><span class="irow-v">${sh?.name}</span></div>
+        <div class="irow"><span class="irow-l">Rider</span><span class="irow-v">${r?.name||'⚠️ Unassigned'}</span></div>
+        <div class="irow"><span class="irow-l">Address</span><span class="irow-v">${o.addr}</span></div>
+        ${o.status==='Try in Progress'&&o.tryStarted?`<div style="margin-top:8px;padding:8px 10px;background:var(--al);border-radius:var(--r8);font-size:12px;color:var(--amber)">⏱ Try window: ${Math.max(0,Math.floor(S.cfg.tryMins-(Date.now()-new Date(o.tryStarted).getTime())/60000))} minutes remaining</div>`:''}
+        <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+          ${!o.rid?`<select onchange="assignRiderOps('${o.id}',this.value)" style="padding:6px 10px;border:1px solid var(--ink5);border-radius:var(--r8);font-size:12.5px;flex:1"><option value="">Assign rider...</option>${S.riders.filter(r=>r.status==='Available').map(r=>`<option value="${r.id}">${r.name} — ${r.zone}</option>`).join('')}</select>`:''}
+          <button class="btn btn-o btn-sm" onclick="showOrderMdl('${o.id}')">View Details</button>
+        </div>
+      </div>`;
+    }).join('')}
+    <div class="card" style="margin-top:14px">
+      <div class="cd-hd"><div class="cd-title">Activity Feed</div></div>
+      ${S.feed.map(f=>`<div class="feed-item"><div class="feed-dot" style="background:${f.color}"></div><div><div class="feed-text">${f.text}</div><div class="feed-time">${f.time}</div></div></div>`).join('')}
+    </div>
+  `;
+}
+function assignRiderOps(oid,rid){if(!rid)return;const o=S.orders.find(o=>o.id===oid),r=S.riders.find(r=>r.id===rid);if(o)o.rid=rid;if(r)r.status='On Delivery';toast(`${r?.name} assigned ✓`);renderPg('op-live');}
+
+/* === OPS — ISSUES === */
+function rIssues(){
+  const iss=issues();
+  const manualIssues=[
+    {id:'ISS-001',type:'Customer Not Answering',oid:'TF-1019',cust:'Deepa Ramachandran',rider:'Murugan S',severity:'High',open:true,desc:'Rider called 3 times. No answer. 10 mins left in window.'},
+    {id:'ISS-002',type:'Item Damage Claim',oid:'TF-1020',cust:'Ananya Krishnan',rider:'Vijay K',severity:'Medium',open:false,desc:'Customer claims dupatta was torn on arrival.'},
+  ];
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Issues & Escalations</div><div class="pg-sub">${manualIssues.filter(i=>i.open).length} open · ${manualIssues.filter(i=>!i.open).length} resolved</div></div>
+      <button class="btn btn-d btn-sm" onclick="openRaiseIssueMdl()">+ Raise Issue</button>
+    </div>
+    ${iss.length>0?`<div class="alert a-red"><span class="a-ic">🚨</span><span>${iss.length} order(s) have try windows ending in under 5 minutes! Take action immediately.</span></div>`:''}
+    <div class="tab-bar">
+      <button class="tab-btn on" onclick="showIssuesTab('open',this)">Open (${manualIssues.filter(i=>i.open).length})</button>
+      <button class="tab-btn" onclick="showIssuesTab('resolved',this)">Resolved (${manualIssues.filter(i=>!i.open).length})</button>
+    </div>
+    <div id="issues-list">${rIssueCards(manualIssues.filter(i=>i.open))}</div>
+  `;
+}
+function showIssuesTab(f,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const iss=[{id:'ISS-001',type:'Customer Not Answering',oid:'TF-1019',cust:'Deepa Ramachandran',rider:'Murugan S',severity:'High',open:true,desc:'Rider called 3 times. No answer. 10 mins left in window.'},{id:'ISS-002',type:'Item Damage Claim',oid:'TF-1020',cust:'Ananya Krishnan',rider:'Vijay K',severity:'Medium',open:false,desc:'Customer claims dupatta was torn on arrival.'}];
+  $('issues-list').innerHTML=rIssueCards(f==='open'?iss.filter(i=>i.open):iss.filter(i=>!i.open));
+}
+function rIssueCards(list){
+  if(!list.length)return`<div class="empty"><div class="empty-ic">✅</div><div class="empty-t">No issues</div></div>`;
+  return list.map(i=>`
+    <div class="card mb10" style="padding:15px;border-left:3px solid ${i.severity==='High'?'var(--red)':'var(--amber)'}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:9px">
+        <span style="font-weight:700;font-size:12px;color:var(--ink3)">${i.id}</span>
+        <span class="bdg ${i.severity==='High'?'bdg-red':'bdg-amber'}">${i.severity}</span>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px">${i.type}</div>
+      <div class="irow"><span class="irow-l">Order</span><span class="irow-v" style="color:var(--teal)">${i.oid}</span></div>
+      <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${i.cust}</span></div>
+      <div class="irow"><span class="irow-l">Rider</span><span class="irow-v">${i.rider}</span></div>
+      <div style="background:var(--bg);border-radius:var(--r8);padding:9px 11px;margin:10px 0;font-size:12.5px;color:var(--ink3);line-height:1.6">${i.desc}</div>
+      ${i.open?`<div style="display:flex;gap:7px"><button class="btn btn-p btn-sm" onclick="toast('Issue escalated to senior ops ✓')">Escalate</button><button class="btn btn-o btn-sm" onclick="toast('Issue marked resolved ✓')">Mark Resolved</button><button class="btn btn-g btn-sm" onclick="callCustomer('${i.cust}')">📞 Call Customer</button></div>`:'<span class="bdg bdg-sage">✓ Resolved</span>'}
+    </div>`).join('');
+}
+function callCustomer(name){toast(`Calling ${name}...`);}
+function openRaiseIssueMdl(){
+  openMdl(`<div class="modal-body">
+    <div class="frow"><div class="fld"><label>Issue Type <span class="req">*</span></label><select id="it"><option>Customer Not Answering</option><option>Item Damage Claim</option><option>Rider Not Moving</option><option>Payment Dispute</option><option>Wrong Items</option><option>Other</option></select></div><div class="fld"><label>Severity</label><select id="is"><option>High</option><option>Medium</option><option>Low</option></select></div></div>
+    <div class="frow"><div class="fld"><label>Order ID</label><input id="io" placeholder="TF-XXXX"/></div><div class="fld"><label>Rider Name</label><select id="ir"><option value="">Select...</option>${S.riders.map(r=>`<option>${r.name}</option>`).join('')}</select></div></div>
+    <div class="fld"><label>Description <span class="req">*</span></label><textarea id="id2" placeholder="Describe the issue in detail..."></textarea></div>
+    <div class="fld"><label>Evidence / Photo</label><div class="img-upload-zone"><input type="file" accept="image/*" onchange="handleIssuePhoto(event)"/><div class="img-upload-zone-ic">📸</div><div class="img-upload-zone-txt">Upload evidence photo</div></div><div id="issue-photo-prev"></div></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-o" onclick="closeMdlF()">Cancel</button><button class="btn btn-d" onclick="saveIssue()">🚨 Raise Issue</button></div>`,'⚠️ Raise New Issue');
+}
+function handleIssuePhoto(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{$('issue-photo-prev').innerHTML=`<img src="${e.target.result}" style="width:100%;border-radius:var(--r8);margin-top:8px;max-height:180px;object-fit:cover"/>`;toast('Photo uploaded ✓');};r.readAsDataURL(f);}
+function saveIssue(){const d=$('id2')?.value.trim();if(!d){toast('Please describe the issue');return;}closeMdlF();toast('Issue raised and team notified 🚨');S.feed.unshift({color:'#C0392B',text:`New issue raised: ${$('it')?.value||'Issue'} — ${$('io')?.value||'Order'}`,time:'Just now'});}
+
+/* === OPS — DISPATCH === */
+function rDispatch(){
+  const unassigned=S.orders.filter(o=>!o.rid&&['Placed'].includes(o.status));
+  const avail=S.riders.filter(r=>r.status==='Available');
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Dispatch Control</div><div class="pg-sub">Assign riders to pending orders</div></div></div>
+    <div class="g2 mb14">
+      <div class="card kpi" style="--kc:var(--rose)" data-ic="📦"><div class="kpi-l">Unassigned Orders</div><div class="kpi-v">${unassigned.length}</div></div>
+      <div class="card kpi" style="--kc:var(--teal)" data-ic="🏍️"><div class="kpi-l">Available Riders</div><div class="kpi-v">${avail.length}</div></div>
+    </div>
+    ${unassigned.length===0?`<div class="alert a-teal"><span class="a-ic">✅</span><span>All orders have riders assigned! Great work.</span></div>`:`
+    <div class="card mb14">
+      <div class="cd-hd"><div class="cd-title">Orders Needing Riders</div></div>
+      ${unassigned.map(o=>{const sh=gS(o.sid),c=gC(o.cid);return`
+        <div style="padding:13px 15px;border-bottom:1px solid var(--ink5)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-weight:700;color:var(--teal)">${o.id}</span><span class="bdg bdg-rose">Unassigned</span></div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-bottom:9px">${c?.name} · ${sh?.name} · ${o.addr}</div>
+          <select onchange="assignFromDispatch('${o.id}',this.value)" style="width:100%;padding:8px 10px;border:1px solid var(--ink5);border-radius:var(--r8);font-size:13px;background:var(--white)">
+            <option value="">Select available rider...</option>
+            ${avail.map(r=>`<option value="${r.id}">${r.name} — ${r.zone} (${r.trips} trips · ⭐ ${r.rating})</option>`).join('')}
+          </select>
+        </div>`}).join('')}
+    </div>`}
+    <div class="card">
+      <div class="cd-hd"><div class="cd-title">Rider Status Board</div></div>
+      ${S.riders.map(r=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid var(--ink5)">
+          <div class="av" style="width:34px;height:34px;background:${avc(r.name)}22;color:${avc(r.name)};font-size:12px">${ini(r.name)}</div>
+          <div style="flex:1"><div style="font-weight:600;font-size:13px">${r.name}</div><div style="font-size:11px;color:var(--ink4)">${r.zone} · ${r.vehicle}</div></div>
+          <div style="text-align:right"><span class="bdg ${sbdg(r.status)}">${r.status}</span><div style="font-size:11px;color:var(--ink4);margin-top:3px">${r.trips} trips · ⭐${r.rating}</div></div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+function assignFromDispatch(oid,rid){if(!rid)return;const o=S.orders.find(o=>o.id===oid),r=S.riders.find(r=>r.id===rid);if(o)o.rid=rid;if(r)r.status='On Delivery';toast(`✓ ${r?.name} assigned to ${oid}`);renderPg('op-dispatch');}
+
+/* === OPS — SOP === */
+function rSop(){
+  const sops=[
+    {cat:'Customer Not Answering',icon:'📞',steps:['Call the customer 3 times over 10 minutes','If no answer, WhatsApp the delivery address','After 15 mins still no answer, call ops manager','DO NOT leave items at the door unattended','If total wait >20 mins, mark order "Return to Shop"','Document everything with timestamps in the app']},
+    {cat:'Timer Expiry',icon:'⏱',steps:['At 35 mins, send automatic WhatsApp reminder to customer','At 40 mins, rider calls customer directly','At 43 mins, ops team is auto-notified','At 45 mins, rider rings doorbell and waits 2 mins','Collect ALL items — no partial returns','Log kept items if customer is present and willing']},
+    {cat:'Damage Claim',icon:'🔍',steps:['Never argue with the customer','Collect photographic evidence on the spot','Ask customer to sign digital damage acknowledgment','Return item to shop with damage note','Ops to verify with shop CCTV and rider pre-pickup photo','Resolve within 24 hours — customer gets benefit of doubt for <₹500/₦10,000']},
+    {cat:'Wrong Items Delivered',icon:'📦',steps:['Apologise immediately and sincerely','Do NOT ask customer to return themselves','Rider returns items immediately','Correct items dispatched within 2 hours if stock available','If unavailable, full refund + ₹50/₦1,000 voucher','Log incident for shop performance review']},
+    {cat:'Payment Dispute',icon:'💳',steps:['Never pressure customer to pay','Screenshot all payment screens as evidence','Escalate to ops manager within 5 minutes','Keep rider on standby do not leave','If dispute unresolved in 15 mins, collect all items','Full refund initiated automatically — no manual approval']},
+  ];
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Standard Operating Procedures</div><div class="pg-sub">Follow exactly — every time, no exceptions</div></div></div>
+    <div class="alert a-teal"><span class="a-ic">📋</span><span>These SOPs are non-negotiable. Every deviation must be logged and reported.</span></div>
+    ${sops.map((s,si)=>`
+      <div class="card mb10">
+        <div class="cd-hd" style="cursor:pointer" onclick="toggleSop(${si})">
+          <div><div class="cd-title">${s.icon} ${s.cat}</div></div>
+          <span id="sop-ic-${si}" style="font-size:18px;color:var(--ink4)">▼</span>
+        </div>
+        <div id="sop-body-${si}" style="padding:14px 15px">
+          ${s.steps.map((step,i)=>`
+            <div style="display:flex;gap:10px;margin-bottom:9px">
+              <div style="width:20px;height:20px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px">${i+1}</div>
+              <div style="font-size:13px;color:var(--ink2);line-height:1.55">${step}</div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('')}
+  `;
+}
+function toggleSop(i){const b=$(`sop-body-${i}`),ic=$(`sop-ic-${i}`);if(!b)return;const open=b.style.display!=='none';b.style.display=open?'none':'block';if(ic)ic.textContent=open?'▶':'▼';}
+</script>
+</body>
+</html>

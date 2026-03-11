@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>TryNFits — Customer · Shop · Rider</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:15px}
+body{font-family:'DM Sans',sans-serif;background:#F7F5F0;color:#1A1A18;min-height:100vh;overflow-x:hidden}
+button{font-family:'DM Sans',sans-serif;cursor:pointer}
+input,select,textarea{font-family:'DM Sans',sans-serif}
+:root{
+  --bg:#F7F5F0;--white:#fff;--paper:#FDFCF9;
+  --ink:#1A1A18;--ink2:#3D3D38;--ink3:#72706A;--ink4:#A8A59E;--ink5:#D8D4CC;
+  --teal:#0B6E68;--teal2:#0D8A82;--tl:#E8F5F4;--tb:#B8E5E2;
+  --amber:#C17F24;--al:#FEF6E7;--ab:#FCDEA0;
+  --rose:#B5294E;--rl:#FDF0F4;--rb:#F5B8CC;
+  --sage:#3D6B5C;--sl:#EBF3EF;
+  --red:#C0392B;--rdl:#FDECEA;
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;--r99:999px;
+  --sh:0 1px 4px rgba(0,0,0,.07),0 2px 8px rgba(0,0,0,.04);
+  --shm:0 4px 20px rgba(0,0,0,.10),0 2px 8px rgba(0,0,0,.06);
+  --shl:0 12px 48px rgba(0,0,0,.14),0 4px 16px rgba(0,0,0,.08);
+}
+
+/* ── ROLE SCREEN ── */
+#role-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(145deg,#0B6E68,#083D3A 50%,#05302D);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+#role-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(255,255,255,.04) 0%,transparent 60%),radial-gradient(ellipse at 70% 20%,rgba(184,229,226,.06) 0%,transparent 50%)}
+.rs-logo{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,7vw,54px);font-weight:700;color:#fff;letter-spacing:-1.5px;margin-bottom:6px;text-align:center;position:relative;z-index:1}
+.rs-logo em{color:#B8E5E2;font-style:normal}
+.rs-sub{font-size:11.5px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:28px;text-align:center;position:relative;z-index:1}
+.rs-curr{display:flex;gap:8px;margin-bottom:30px;position:relative;z-index:1}
+.rs-curr-btn{padding:7px 18px;border-radius:var(--r99);font-size:12.5px;font-weight:500;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s}
+.rs-curr-btn.on{background:#fff;color:var(--teal);border-color:#fff;font-weight:700}
+.rs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:580px;position:relative;z-index:1}
+.rs-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:var(--r16);padding:22px 14px;text-align:center;cursor:pointer;transition:all .22s;backdrop-filter:blur(10px)}
+.rs-card:hover{background:rgba(255,255,255,.16);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.rs-card-ic{font-size:30px;margin-bottom:10px}
+.rs-card-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.rs-card-desc{font-size:11px;color:rgba(255,255,255,.45);line-height:1.4}
+.rs-hint{font-size:11px;color:rgba(255,255,255,.28);margin-top:22px;position:relative;z-index:1}
+.rs-link{font-size:12px;color:rgba(255,255,255,.4);margin-top:12px;position:relative;z-index:1}
+.rs-link a{color:rgba(255,255,255,.65);text-decoration:underline;cursor:pointer}
+
+/* ── APP SHELL ── */
+#app{display:none;flex-direction:column;min-height:100vh;width:100%}
+#app.show{display:flex}
+
+/* ── TOPBAR ── */
+#topbar{height:56px;background:var(--white);border-bottom:1px solid var(--ink5);display:flex;align-items:center;padding:0 16px;gap:10px;position:sticky;top:0;z-index:200;box-shadow:var(--sh);width:100%}
+.tb-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--teal);cursor:pointer;white-space:nowrap;letter-spacing:-.5px}
+.tb-logo em{color:var(--ink);font-style:normal}
+.tb-role{font-size:11px;background:var(--tl);color:var(--teal);padding:3px 10px;border-radius:var(--r99);font-weight:600;border:1px solid var(--tb);white-space:nowrap}
+.tb-spacer{flex:1}
+.tb-curr-wrap{display:flex;gap:4px}
+.tb-curr{padding:4px 10px;border-radius:var(--r99);font-size:11.5px;font-weight:600;border:1px solid var(--ink5);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s}
+.tb-curr.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.tb-switch{font-size:11.5px;color:var(--ink3);background:none;border:1px solid var(--ink5);border-radius:var(--r99);padding:4px 12px;transition:all .15s;white-space:nowrap}
+.tb-switch:hover{background:var(--bg)}
+
+/* ── LAYOUT ── */
+#layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 56px)}
+#sidebar{width:210px;min-width:210px;background:var(--white);border-right:1px solid var(--ink5);display:flex;flex-direction:column;overflow-y:auto;padding:10px 8px}
+#content{flex:1;overflow-y:auto;background:var(--bg)}
+
+/* ── SIDEBAR ── */
+.sb-grp{font-size:9.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink4);padding:12px 10px 4px;font-weight:600}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--r8);cursor:pointer;font-size:13px;color:var(--ink3);border:none;background:none;width:100%;text-align:left;transition:all .15s;font-family:'DM Sans',sans-serif}
+.sb-item:hover{background:var(--bg);color:var(--ink)}
+.sb-item.on{background:var(--tl);color:var(--teal);font-weight:600}
+.sb-ic{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.sb-bdg{margin-left:auto;font-size:10px;font-weight:700;padding:2px 6px;border-radius:var(--r99);background:var(--rl);color:var(--rose)}
+.sb-div{height:1px;background:var(--ink5);margin:8px 0}
+.sb-info{padding:10px;font-size:11.5px;color:var(--ink4);line-height:1.7;border-top:1px solid var(--ink5);margin-top:auto}
+.sb-info b{color:var(--teal);display:block;font-size:12px;margin-bottom:2px}
+
+/* ── BOTTOM NAV ── */
+#bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--ink5);z-index:200;padding:4px 0 max(env(safe-area-inset-bottom),4px)}
+.bn-row{display:flex;justify-content:space-around}
+.bn-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;border:none;background:none;color:var(--ink4);cursor:pointer;min-width:50px;position:relative;font-family:'DM Sans',sans-serif}
+.bn-btn.on{color:var(--teal)}
+.bn-ic{font-size:21px;line-height:1;position:relative}
+.bn-lbl{font-size:9.5px;font-weight:500}
+.bn-dot{position:absolute;top:-2px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--rose);border:2px solid var(--white)}
+.cart-bdg{position:absolute;top:-4px;right:-6px;background:var(--rose);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:var(--r99);display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--white)}
+
+/* ── CONTENT PAGES ── */
+.page{padding:18px;display:none;animation:pgIn .2s ease both}
+.page.on{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.pg-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap}
+.pg-title{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3vw,26px);font-weight:600;line-height:1.1}
+.pg-sub{font-size:12px;color:var(--ink4);margin-top:3px}
+.pg-acts{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+
+/* ── CARD ── */
+.card{background:var(--white);border:1px solid var(--ink5);border-radius:var(--r12);box-shadow:var(--sh)}
+.cd-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;border-bottom:1px solid var(--ink5)}
+.cd-title{font-size:13.5px;font-weight:600}
+.cd-sub{font-size:11px;color:var(--ink4);margin-top:1px}
+.mb14{margin-bottom:14px}
+.mb10{margin-bottom:10px}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:15px;margin-bottom:14px}
+
+/* ── KPI ── */
+.kpi{padding:15px;border-left:3px solid var(--kc,var(--teal));overflow:hidden;position:relative}
+.kpi::after{content:attr(data-ic);position:absolute;right:10px;bottom:4px;font-size:26px;opacity:.1;line-height:1}
+.kpi-l{font-size:9.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink4);margin-bottom:6px;font-weight:600}
+.kpi-v{font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.5vw,27px);font-weight:600;color:var(--ink);line-height:1;margin-bottom:3px}
+.kpi-n{font-size:11.5px;font-weight:500}
+.kpi-n.up{color:var(--sage)}.kpi-n.dn{color:var(--red)}.kpi-n.neu{color:var(--ink4)}
+
+/* ── BADGE ── */
+.bdg{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:var(--r99);white-space:nowrap}
+.bdg-teal{background:var(--tl);color:var(--teal)}
+.bdg-amber{background:var(--al);color:var(--amber)}
+.bdg-rose{background:var(--rl);color:var(--rose)}
+.bdg-sage{background:var(--sl);color:var(--sage)}
+.bdg-gray{background:var(--bg);color:var(--ink3)}
+.bdg-sky{background:#EFF6FF;color:#1D6FAD}
+
+/* ── BUTTON ── */
+.btn{padding:9px 17px;border-radius:var(--r8);font-size:13px;font-weight:600;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .15s;line-height:1.2;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.btn-p{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-p:hover{background:var(--teal2)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-o{background:var(--white);color:var(--ink2);border-color:var(--ink5)}
+.btn-o:hover{background:var(--bg)}
+.btn-d{background:var(--rose);color:#fff}
+.btn-d:hover{opacity:.9}
+.btn-g{background:none;border:none;color:var(--ink3);padding:6px 8px;font-size:13px}
+.btn-g:hover{color:var(--ink)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-xs{padding:4px 8px;font-size:11.5px}
+.btn-fw{width:100%}
+
+/* ── FORM ── */
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;padding:9px 11px;border:1px solid var(--ink5);border-radius:var(--r8);font-size:13px;background:var(--white);color:var(--ink);transition:all .15s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--tl);outline:none}
+.fld textarea{min-height:78px;resize:vertical}
+.fld input[type=file]{padding:7px;cursor:pointer;background:var(--bg);font-size:12px}
+.fld-hint{font-size:11px;color:var(--ink4);margin-top:3px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.req{color:var(--rose)}
+.fsec{font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin:15px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--ink5)}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-zone{border:2px dashed var(--ink5);border-radius:var(--r12);padding:22px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);position:relative;overflow:hidden}
+.img-upload-zone:hover{border-color:var(--teal);background:var(--tl)}
+.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-zone-ic{font-size:30px;margin-bottom:8px}
+.img-upload-zone-txt{font-size:13px;color:var(--ink3);font-weight:500}
+.img-upload-zone-sub{font-size:11px;color:var(--ink4);margin-top:3px}
+.img-thumb-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.img-thumb{width:64px;height:64px;border-radius:var(--r8);object-fit:cover;border:2px solid transparent;cursor:pointer;transition:all .15s}
+.img-thumb.on{border-color:var(--teal)}
+.img-thumb-add{width:64px;height:64px;border-radius:var(--r8);border:2px dashed var(--ink5);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;color:var(--ink4);transition:all .15s;background:var(--bg);position:relative;overflow:hidden}
+.img-thumb-add input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-thumb-add:hover{border-color:var(--teal);color:var(--teal)}
+.preview-wrap{width:100%;aspect-ratio:4/3;border-radius:var(--r12);overflow:hidden;border:1px solid var(--ink5);background:var(--bg);position:relative;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:10px}
+.preview-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.preview-wrap .chg-btn{position:absolute;bottom:8px;right:8px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r12);border:1px solid var(--ink5)}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink4);padding:10px 13px;border-bottom:1px solid var(--ink5);white-space:nowrap;background:var(--bg)}
+.tbl td{padding:11px 13px;font-size:13px;border-bottom:1px solid var(--ink5);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl-row{cursor:pointer;transition:background .12s}
+.tbl-row:hover td{background:var(--tl)}
+
+/* ── INFO ROWS ── */
+.irow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--ink5)}
+.irow:last-child{border-bottom:none}
+.irow-l{font-size:12.5px;color:var(--ink3)}
+.irow-v{font-size:13px;font-weight:600;text-align:right}
+
+/* ── ALERT ── */
+.alert{padding:11px 13px;border-radius:var(--r8);font-size:12.5px;margin-bottom:13px;display:flex;gap:9px;align-items:flex-start;line-height:1.55}
+.a-teal{background:var(--tl);color:var(--teal);border:1px solid var(--tb)}
+.a-amber{background:var(--al);color:var(--amber);border:1px solid var(--ab)}
+.a-red{background:var(--rdl);color:var(--red);border:1px solid #F5C6C2}
+.a-rose{background:var(--rl);color:var(--rose);border:1px solid var(--rb)}
+.a-ic{font-size:15px;flex-shrink:0;margin-top:1px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0B6E68 0%,#063A37 100%);border-radius:var(--r16);padding:20px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-25px;top:-25px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.05)}
+.hero::after{content:'';position:absolute;right:40px;bottom:-35px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-tag{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:7px}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,3vw,23px);font-weight:600;margin-bottom:6px;line-height:1.2}
+.hero-sub{font-size:12.5px;color:rgba(255,255,255,.7);line-height:1.6}
+.hero-pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.hero-pill{font-size:11px;background:rgba(255,255,255,.12);color:#fff;padding:4px 10px;border-radius:var(--r99);border:1px solid rgba(255,255,255,.18)}
+
+/* ── PRODUCT GRID ── */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:12px;margin-bottom:14px}
+.pc{background:var(--white);border:1px solid var(--ink5);border-radius:var(--r12);overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.pc:hover{box-shadow:var(--shm);transform:translateY(-2px)}
+.pc.sel{border-color:var(--teal);box-shadow:0 0 0 2px var(--tb)}
+.pc-img{aspect-ratio:3/4;position:relative;overflow:hidden;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:42px}
+.pc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.pc:hover .pc-img img{transform:scale(1.04)}
+.pc-chk{position:absolute;top:8px;right:8px;width:23px;height:23px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.pc-bdg{position:absolute;top:8px;left:8px}
+.pc-info{padding:10px 11px}
+.pc-name{font-size:12.5px;font-weight:600;margin-bottom:2px;line-height:1.3}
+.pc-shop{font-size:11px;color:var(--ink4)}
+.pc-price{font-size:13.5px;font-weight:700;color:var(--teal);margin-top:4px}
+.sz-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.sz{font-size:10px;padding:2px 6px;border-radius:var(--r4);border:1px solid var(--ink5);cursor:pointer;transition:all .1s;color:var(--ink3);font-weight:500}
+.sz:hover{border-color:var(--teal);color:var(--teal)}
+.sz.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* ── STEPPER ── */
+.stepper{display:flex;align-items:flex-start;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.st-item{display:flex;align-items:center;flex-shrink:0}
+.st-wrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+.st-dot{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .3s}
+.st-dot.done{background:var(--teal);color:#fff}
+.st-dot.cur{background:var(--teal);color:#fff;box-shadow:0 0 0 4px var(--tl)}
+.st-dot.idle{background:var(--white);color:var(--ink4);border:2px solid var(--ink5)}
+.st-lbl{font-size:9.5px;color:var(--ink4);white-space:nowrap;font-weight:500}
+.st-lbl.cur{color:var(--teal);font-weight:700}
+.st-line{height:2px;width:26px;flex-shrink:0;margin-top:13px;transition:background .3s}
+.st-line.done{background:var(--teal)}
+.st-line.idle{background:var(--ink5)}
+
+/* ── TIMER ── */
+.timer{display:flex;align-items:center;gap:8px;padding:11px 13px;border-radius:var(--r8);font-size:13px;font-weight:500;margin-bottom:12px}
+.timer.run{background:var(--al);color:var(--amber);border:1px solid var(--ab)}
+.timer.hot{background:var(--rdl);color:var(--red);border:1px solid #F5C6C2;animation:pulse 1s infinite}
+.timer.done{background:var(--sl);color:var(--sage);border:1px solid #A8D5BE}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.timer-big{font-size:15px;font-weight:700}
+
+/* ── MODAL ── */
+.ovl{position:fixed;inset:0;background:rgba(26,26,24,.55);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.ovl.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:var(--r24) var(--r24) 0 0;width:100%;max-width:620px;max-height:93vh;overflow-y:auto;transform:translateY(60px);transition:transform .28s cubic-bezier(.34,1.2,.64,1);-webkit-overflow-scrolling:touch}
+.ovl.open .modal{transform:translateY(0)}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--ink5);position:sticky;top:0;background:var(--white);z-index:2}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--ink5);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--ink3);transition:all .15s}
+.modal-close:hover{background:var(--ink5)}
+.modal-body{padding:20px}
+.modal-foot{padding:13px 20px;border-top:1px solid var(--ink5);display:flex;gap:10px;position:sticky;bottom:0;background:var(--white)}
+
+/* ── CONFIRM ── */
+.conf-ovl{position:fixed;inset:0;background:rgba(26,26,24,.6);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.conf-ovl.open{opacity:1;pointer-events:all}
+.conf-box{background:var(--white);border-radius:var(--r16);padding:24px;width:100%;max-width:360px;box-shadow:var(--shl);transform:scale(.95);transition:transform .2s}
+.conf-ovl.open .conf-box{transform:scale(1)}
+.conf-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:8px}
+.conf-msg{font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:20px}
+.conf-btns{display:flex;gap:10px;justify-content:flex-end}
+
+/* ── TOAST ── */
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--r8);font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .28s;pointer-events:none;max-width:90vw;box-shadow:var(--shm);text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── CART FLOAT ── */
+.cart-float{position:fixed;bottom:72px;right:18px;z-index:190;display:none}
+.cart-float.show{display:block}
+.cf-btn{background:var(--teal);color:#fff;border:none;border-radius:var(--r99);padding:12px 18px;font-size:14px;font-weight:600;box-shadow:var(--shm);display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.cf-btn:hover{transform:scale(1.04)}
+.cf-cnt{background:var(--rose);color:#fff;font-size:11px;font-weight:700;min-width:19px;height:19px;border-radius:var(--r99);display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
+
+/* ── SEARCH + FILTER ── */
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--ink5);border-radius:var(--r8);padding:0 11px;margin-bottom:13px}
+.search-bar input{flex:1;border:none;background:none;padding:10px 0;font-size:13px;color:var(--ink)}
+.search-bar input::placeholder{color:var(--ink4)}
+.search-bar input:focus{outline:none}
+.sb-ic{font-size:15px;color:var(--ink4)}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:13px;-webkit-overflow-scrolling:touch}
+.chip{padding:5px 13px;border-radius:var(--r99);font-size:12px;font-weight:500;border:1px solid var(--ink5);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.chip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:2px;padding:3px;background:var(--bg);border-radius:var(--r8);margin-bottom:14px;border:1px solid var(--ink5)}
+.tab-btn{flex:1;padding:7px;border-radius:var(--r4);font-size:12.5px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--ink3);transition:all .15s;text-align:center;font-family:'DM Sans',sans-serif}
+.tab-btn.on{background:var(--white);color:var(--teal);font-weight:700;box-shadow:var(--sh)}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:38px 20px}
+.empty-ic{font-size:42px;margin-bottom:11px}
+.empty-t{font-size:15px;font-weight:600;color:var(--ink3)}
+.empty-s{font-size:12.5px;color:var(--ink4);margin-top:4px}
+.divider{height:1px;background:var(--ink5);margin:13px 0}
+.flow-item{display:flex;gap:11px;margin-bottom:10px}
+.flow-n{width:23px;height:23px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+.flow-t{font-size:13px;font-weight:600}
+.flow-d{font-size:12px;color:var(--ink4);margin-top:2px;line-height:1.55}
+.flow-conn{width:2px;height:11px;background:var(--ink5);margin-left:10px}
+.rider-toggle{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r8);border:none;cursor:pointer;font-size:13.5px;font-weight:600;transition:all .2s;font-family:'DM Sans',sans-serif}
+.rider-toggle.on{background:var(--tl);color:var(--teal)}
+.rider-toggle.off{background:var(--bg);color:var(--ink3);border:1px solid var(--ink5)}
+.r-dot{width:10px;height:10px;border-radius:50%}
+.r-dot.on{background:var(--teal);box-shadow:0 0 0 3px var(--tb)}
+.r-dot.off{background:var(--ink4)}
+.dep-chip{display:inline-flex;align-items:center;gap:5px;background:var(--al);color:var(--amber);padding:5px 11px;border-radius:var(--r8);font-size:12px;font-weight:700;border:1px solid var(--ab)}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+.pay-opt{padding:14px 10px;text-align:center;cursor:pointer;border:1px solid var(--ink5);background:var(--white);border-radius:var(--r12);transition:all .15s}
+.pay-opt:hover,.pay-opt.on{border-color:var(--teal);background:var(--tl)}
+.pay-opt-ic{font-size:24px;margin-bottom:6px}
+.pay-opt-lbl{font-size:12px;font-weight:600}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  #sidebar{display:none}
+  #bot-nav{display:block}
+  #content{padding-bottom:68px}
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .g21{grid-template-columns:1fr}
+  .tbl-hide{display:none}
+  .cart-float{bottom:74px}
+}
+@media(max-width:500px){
+  .g2{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  .prod-grid{grid-template-columns:1fr 1fr}
+  .rs-grid{grid-template-columns:1fr 1fr}
+  .pay-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ROLE SCREEN ═══ -->
+<div id="role-screen">
+  <div class="rs-logo">TryN<em>Fits</em></div>
+  <div class="rs-sub">Try Before You Buy</div>
+  <div class="rs-curr">
+    <button class="rs-curr-btn on" onclick="pickCurr('INR',this)">₹ India (INR)</button>
+    <button class="rs-curr-btn" onclick="pickCurr('NGN',this)">₦ Nigeria (NGN)</button>
+  </div>
+  <div class="rs-grid">
+    <div class="rs-card" onclick="enterRole('customer')"><div class="rs-card-ic">🛍️</div><div class="rs-card-name">Customer</div><div class="rs-card-desc">Browse & try clothes at home</div></div>
+    <div class="rs-card" onclick="enterRole('shop')"><div class="rs-card-ic">🏪</div><div class="rs-card-name">Shop Owner</div><div class="rs-card-desc">Manage products & orders</div></div>
+    <div class="rs-card" onclick="enterRole('rider')"><div class="rs-card-ic">🏍️</div><div class="rs-card-name">Delivery Partner</div><div class="rs-card-desc">Pickup & deliver orders</div></div>
+  </div>
+  <div class="rs-hint">All portals share live data — changes sync instantly across all roles</div>
+  <div class="rs-link">Admin & Operations? → <a onclick="window.open('trynfits-admin-ops.html','_blank')">Open Admin Portal</a></div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <div id="topbar">
+    <div class="tb-logo" onclick="goHome()">TryN<em>Fits</em></div>
+    <span id="tb-role" class="tb-role"></span>
+    <div class="tb-spacer"></div>
+    <div class="tb-curr-wrap">
+      <button class="tb-curr on" onclick="appCurr('INR',this)">₹</button>
+      <button class="tb-curr" onclick="appCurr('NGN',this)">₦</button>
+    </div>
+    <button class="tb-switch" onclick="goHome()">Switch Role</button>
+  </div>
+  <div id="layout">
+    <div id="sidebar"></div>
+    <div id="content"></div>
+  </div>
+  <div id="bot-nav"><div class="bn-row" id="bn-row"></div></div>
+</div>
+
+<!-- CART FLOAT -->
+<div class="cart-float" id="cart-float">
+  <button class="cf-btn" onclick="goCart()">🛒 Try List <span class="cf-cnt" id="cf-cnt">0</span></button>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- MODAL -->
+<div class="ovl" id="ovl" onclick="closeMdl(event)">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<!-- CONFIRM -->
+<div class="conf-ovl" id="conf-ovl">
+  <div class="conf-box">
+    <div class="conf-title" id="conf-title"></div>
+    <div class="conf-msg" id="conf-msg"></div>
+    <div class="conf-btns">
+      <button class="btn btn-o btn-sm" onclick="closeConf()">Cancel</button>
+      <button class="btn btn-d btn-sm" id="conf-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════ DATA ══════════════ */
+let currency='INR', role=null, page=null;
+let timerIds={};
+
+const S={
+  cfg:{depositINR:49,depositNGN:1000,delivINR:49,delivNGN:500,tryMins:45,maxItems:3,commPct:11},
+  shops:[
+    {id:'SH1',name:'Silk Route Sarees',owner:'Mrs. Meena Kumari',phone:'+91 98400 11111',loc:'T.Nagar, Chennai',zone:'Zone A',cat:'Ethnic Wear',status:'Active',rating:4.8,orders:124,comm:11,joined:'Jan 2025',desc:'Premium silk sarees from Kanchipuram weavers.',emoji:'👘'},
+    {id:'SH2',name:'Trend Avenue',owner:'Mr. Ravi Shankar',phone:'+91 98400 22222',loc:'Nungambakkam, Chennai',zone:'Zone A',cat:'Western Wear',status:'Active',rating:4.6,orders:89,comm:10,joined:'Feb 2025',desc:'Contemporary western wear for modern women.',emoji:'👗'},
+    {id:'SH3',name:'Ethnic Elegance',owner:'Mrs. Priya Iyer',phone:'+91 98400 33333',loc:'Anna Nagar, Chennai',zone:'Zone B',cat:'Ethnic Wear',status:'Active',rating:4.7,orders:67,comm:11,joined:'Feb 2025',desc:'Traditional Indian wear with modern touches.',emoji:'👘'},
+    {id:'SH4',name:'The Style Hub',owner:'Mr. Karthik R',phone:'+91 98400 44444',loc:'Velachery, Chennai',zone:'Zone C',cat:'Casual Wear',status:'Pending',rating:0,orders:0,comm:10,joined:'Mar 2025',desc:'Trendy casual wear.',emoji:'👚'},
+    {id:'SH5',name:'Lagos Lace House',owner:'Mrs. Adaeze Obi',phone:'+234 801 55555',loc:'Lekki Phase 1, Lagos',zone:'Zone A (Lagos)',cat:'African Wear',status:'Active',rating:4.9,orders:43,comm:12,joined:'Mar 2025',desc:'Premium Ankara and George fabric.',emoji:'👗'},
+  ],
+  products:[
+    {id:'P1',sid:'SH1',name:'Kanjivaram Silk Saree',emoji:'👘',cat:'Sarees',INR:3200,NGN:64000,sizes:['Free Size'],stock:4,on:true,mat:'Pure Silk',desc:'Traditional Kanjivaram with gold zari border.',img:null},
+    {id:'P2',sid:'SH1',name:'Designer Anarkali Set',emoji:'👗',cat:'Salwar',INR:1850,NGN:37000,sizes:['XS','S','M','L','XL'],stock:6,on:true,mat:'Cotton Silk',desc:'Embroidered Anarkali with matching dupatta.',img:null},
+    {id:'P3',sid:'SH2',name:'Floral Wrap Dress',emoji:'👗',cat:'Dresses',INR:1200,NGN:24000,sizes:['XS','S','M','L','XL','XXL'],stock:8,on:true,mat:'Rayon',desc:'Breezy summer floral wrap dress.',img:null},
+    {id:'P4',sid:'SH2',name:'Formal Co-ord Set',emoji:'👚',cat:'Co-ords',INR:2100,NGN:42000,sizes:['S','M','L','XL'],stock:5,on:true,mat:'Linen',desc:'Office-ready linen co-ord set.',img:null},
+    {id:'P5',sid:'SH3',name:'Pattu Pavadai (Kids)',emoji:'👘',cat:'Kids',INR:1400,NGN:28000,sizes:['2Y','4Y','6Y','8Y','10Y'],stock:3,on:true,mat:'Silk',desc:'Traditional Pattu Pavadai for girls.',img:null},
+    {id:'P6',sid:'SH3',name:'Churidar Kurta Set',emoji:'👗',cat:'Salwar',INR:980,NGN:19600,sizes:['XS','S','M','L','XL','XXL'],stock:7,on:true,mat:'Cotton',desc:'Daily wear churidar set.',img:null},
+    {id:'P7',sid:'SH5',name:'Ankara Print Dress',emoji:'👗',cat:'African Wear',INR:2800,NGN:56000,sizes:['S','M','L','XL','XXL'],stock:5,on:true,mat:'Cotton',desc:'Bold Ankara print A-line dress.',img:null},
+    {id:'P8',sid:'SH5',name:'George Lace Blouse',emoji:'👚',cat:'Aso-ebi',INR:3500,NGN:70000,sizes:['S','M','L','XL'],stock:3,on:true,mat:'George Lace',desc:'Premium George lace blouse.',img:null},
+  ],
+  customers:[
+    {id:'C1',name:'Deepa Ramachandran',phone:'+91 98765 43210',email:'deepa@email.com',area:'T.Nagar',addr:'42, Anna Nagar West, Chennai 600040'},
+    {id:'C2',name:'Ananya Krishnan',phone:'+91 87654 32109',email:'ananya@email.com',area:'Nungambakkam',addr:'18, Nungambakkam High Road, Chennai'},
+  ],
+  orders:[
+    {id:'TF-1021',cid:'C1',sid:'SH1',items:[{pid:'P1',sz:'Free Size'},{pid:'P2',sz:'M'}],status:'Try in Progress',rid:'R1',ordered:'2025-03-11T09:00:00',tryStarted:'2025-03-11T10:15:00',kept:[],returned:[],addr:'42, Anna Nagar West',pay:'UPI'},
+    {id:'TF-1020',cid:'C2',sid:'SH2',items:[{pid:'P3',sz:'S'},{pid:'P4',sz:'S'}],status:'Completed',rid:'R2',ordered:'2025-03-11T07:30:00',tryStarted:'2025-03-11T08:45:00',kept:['P3'],returned:['P4'],addr:'18, Nungambakkam High Road',pay:'Card'},
+    {id:'TF-1019',cid:'C1',sid:'SH3',items:[{pid:'P6',sz:'M'}],status:'Delivered',rid:'R1',ordered:'2025-03-11T11:00:00',tryStarted:null,kept:[],returned:[],addr:'42, Anna Nagar West',pay:'Cash'},
+  ],
+  riders:[
+    {id:'R1',name:'Murugan S',phone:'+91 99001 11111',zone:'Zone A',status:'On Delivery',trips:6,rating:4.8,earnINR:480,earnNGN:9600,vehicle:'Bike',kyc:true},
+    {id:'R2',name:'Vijay K',phone:'+91 99001 22222',zone:'Zone A',status:'Available',trips:9,rating:4.9,earnINR:720,earnNGN:14400,vehicle:'Bike',kyc:true},
+    {id:'R3',name:'Raman T',phone:'+91 99001 33333',zone:'Zone B',status:'Available',trips:4,rating:4.6,earnINR:320,earnNGN:6400,vehicle:'Bike',kyc:true},
+    {id:'R4',name:'Chidi Obi',phone:'+234 803 44444',zone:'Zone A (Lagos)',status:'Available',trips:12,rating:4.7,earnINR:960,earnNGN:19200,vehicle:'Bike',kyc:true},
+  ],
+  // Cart state
+  cart:[],sizes:{},orderStep:0,activeOid:null,keptItems:[],chkAddr:{line:'',lm:'',area:''},depPaid:false,payMode:'',
+};
+
+/* ══════════════ HELPERS ══════════════ */
+const $=id=>document.getElementById(id);
+const fmt=v=>v==null?'':(currency==='INR'?'₹':'₦')+Number(v).toLocaleString();
+const fmtP=p=>fmt(currency==='INR'?p.INR:p.NGN);
+const dep=()=>fmt(currency==='INR'?S.cfg.depositINR:S.cfg.depositNGN);
+const dlv=()=>fmt(currency==='INR'?S.cfg.delivINR:S.cfg.delivNGN);
+const fmtAmt=(inr,ngn)=>fmt(currency==='INR'?inr:ngn);
+const gP=id=>S.products.find(p=>p.id===id);
+const gS=id=>S.shops.find(s=>s.id===id);
+const gR=id=>S.riders.find(r=>r.id===id);
+const gC=id=>S.customers.find(c=>c.id===id);
+const ini=s=>s?s.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase():'?';
+const avc=n=>['#0B6E68','#C17F24','#B5294E','#1D6FAD','#3D6B5C','#7C3AED'][(n?n.charCodeAt(0):0)%6];
+const sbdg=s=>({'Active':'bdg-teal','Pending':'bdg-amber','Offline':'bdg-gray','Suspended':'bdg-rose','Delivered':'bdg-sky','Try in Progress':'bdg-amber','Completed':'bdg-teal','Placed':'bdg-gray','Picked Up':'bdg-sky','Returning':'bdg-rose','Available':'bdg-teal','On Delivery':'bdg-sky'}[s]||'bdg-gray');
+const gmv=o=>o.kept.reduce((s,pid)=>{const p=gP(pid);return s+(p?(currency==='INR'?p.INR:p.NGN):0);},0);
+const nextOid=()=>'TF-'+(1030+S.orders.length);
+
+/* ══════════════ TOAST ══════════════ */
+let tt;
+function toast(msg,ms=3000){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),ms);}
+
+/* ══════════════ MODAL ══════════════ */
+function openMdl(html,title=''){
+  $('modal-box').innerHTML=`<div class="modal-hd"><div class="modal-title">${title}</div><div class="modal-close" onclick="closeMdlForce()">✕</div></div>${html}`;
+  $('ovl').classList.add('open');
+}
+function closeMdl(e){if(e&&e.target!==$('ovl'))return;$('ovl').classList.remove('open');}
+function closeMdlForce(){$('ovl').classList.remove('open');}
+
+/* ══════════════ CONFIRM ══════════════ */
+function confirm2(title,msg,cb,danger=true){
+  $('conf-title').textContent=title;$('conf-msg').textContent=msg;
+  const btn=$('conf-ok');btn.className=`btn btn-sm ${danger?'btn-d':'btn-p'}`;btn.textContent='Confirm';
+  btn.onclick=()=>{cb();closeConf();};
+  $('conf-ovl').classList.add('open');
+}
+function closeConf(){$('conf-ovl').classList.remove('open');}
+
+/* ══════════════ CURRENCY ══════════════ */
+function pickCurr(c,btn){currency=c;document.querySelectorAll('.rs-curr-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function appCurr(c,btn){currency=c;document.querySelectorAll('.tb-curr').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPg(page);}
+
+/* ══════════════ ROLE / NAV ══════════════ */
+const navCfg={
+  customer:{label:'Customer',nav:[{id:'browse',ic:'🛍️',l:'Browse'},{id:'c-orders',ic:'📦',l:'My Orders'},{id:'howto',ic:'❓',l:'How It Works'}]},
+  shop:{label:'Shop Owner',nav:[{id:'sh-dash',ic:'📊',l:'Dashboard'},{id:'sh-prods',ic:'👗',l:'Products'},{id:'sh-orders',ic:'📦',l:'Orders'},{id:'sh-earn',ic:'💰',l:'Earnings'},{id:'sh-profile',ic:'🏪',l:'Shop Profile'}]},
+  rider:{label:'Delivery Partner',nav:[{id:'rd-home',ic:'🏠',l:'Home'},{id:'rd-trips',ic:'📦',l:'Deliveries'},{id:'rd-earn',ic:'💰',l:'Earnings'},{id:'rd-rules',ic:'📋',l:'Rules'}]},
+};
+
+function enterRole(r){
+  role=r;$('role-screen').style.display='none';$('app').classList.add('show');
+  $('tb-role').textContent=navCfg[r].label;buildNav(r);
+  goToPage(navCfg[r].nav[0].id);
+}
+function goHome(){
+  $('role-screen').style.display='flex';$('app').classList.remove('show');
+  role=null;page=null;S.cart=[];S.orderStep=0;Object.values(timerIds).forEach(clearInterval);timerIds={};updCart();
+}
+
+function buildNav(r){
+  const items=navCfg[r].nav;
+  const sb=$('sidebar');
+  sb.innerHTML=`<div class="sb-grp">${navCfg[r].label}</div>`;
+  items.forEach(it=>{ sb.innerHTML+=`<button class="sb-item" id="sb-${it.id}" onclick="goToPage('${it.id}')"><span class="sb-ic">${it.ic}</span>${it.l}</button>`; });
+  if(r==='customer'){sb.innerHTML+=`<div class="sb-div"></div><div class="sb-info"><b>Try. If it fits, it's yours.</b>Deposit: ${dep()}<br>Delivery: ${dlv()}<br>Try window: ${S.cfg.tryMins} mins<br>Max: ${S.cfg.maxItems} items</div>`;}
+  const bn=$('bn-row');
+  bn.innerHTML=items.map(it=>`<button class="bn-btn" id="bn-${it.id}" onclick="goToPage('${it.id}')"><span class="bn-ic">${it.ic}</span><span class="bn-lbl">${it.l}</span></button>`).join('');
+}
+
+function goToPage(pid){
+  page=pid;
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.bn-btn').forEach(el=>el.classList.remove('on'));
+  const s=$('sb-'+pid),b=$('bn-'+pid);
+  if(s)s.classList.add('on');if(b)b.classList.add('on');
+  renderPg(pid);$('content').scrollTop=0;
+}
+
+function goCart(){S.orderStep=1;goToPage('browse');}
+
+function renderPg(pid){
+  const map={
+    browse:rBrowse,'c-orders':rCOrders,howto:rHowTo,
+    'sh-dash':rShDash,'sh-prods':rShProds,'sh-orders':rShOrders,'sh-earn':rShEarn,'sh-profile':rShProfile,
+    'rd-home':rRdHome,'rd-trips':rRdTrips,'rd-earn':rRdEarn,'rd-rules':rRdRules,
+  };
+  if(map[pid]){
+    $('content').innerHTML=`<div class="page on" id="pg-${pid}">${map[pid]()}</div>`;
+    afterRender(pid);
+  }
+}
+
+function afterRender(pid){
+  updCart();
+  if(pid==='browse'&&S.orderStep===5)startTryTimer();
+}
+
+/* ══════════════ CART ══════════════ */
+function updCart(){
+  const f=$('cart-float');const c=$('cf-cnt');
+  if(role==='customer'&&S.cart.length>0&&S.orderStep===0){f.classList.add('show');if(c)c.textContent=S.cart.length;}
+  else{f.classList.remove('show');}
+  // update sidebar cart hint
+  const sbc=$('sb-browse');if(sbc&&S.cart.length>0)sbc.textContent=`🛍️ Browse (${S.cart.length}/${S.cfg.maxItems})`;
+}
+
+/* ══════════════ CUSTOMER BROWSE ══════════════ */
+function rBrowse(){
+  if(S.orderStep>=1)return rOrderFlow();
+  const actShops=S.shops.filter(s=>s.status==='Active');
+  const prods=S.products.filter(p=>p.on&&actShops.find(s=>s.id===p.sid));
+  const cats=['All',...new Set(prods.map(p=>p.cat))];
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Browse & Try</div><div class="pg-sub">${actShops.length} boutiques · ${prods.length} styles available</div></div>
+      ${S.cart.length>0?`<button class="btn btn-p btn-sm" onclick="goCart()">🛒 ${S.cart.length} item${S.cart.length>1?'s':''}</button>`:''}
+    </div>
+    <div class="hero">
+      <div class="hero-tag">Try Before You Buy</div>
+      <div class="hero-title">Try it at home. If it fits, it's yours.</div>
+      <div class="hero-sub">Browse local boutiques. Try up to ${S.cfg.maxItems} items in your own home. Pay only for what you love.</div>
+      <div class="hero-pills">
+        <span class="hero-pill">↩ ${dep()} deposit</span>
+        <span class="hero-pill">⏱ ${S.cfg.tryMins} min window</span>
+        <span class="hero-pill">🏪 ${actShops.length} shops</span>
+      </div>
+    </div>
+    <div class="search-bar"><span class="sb-ic">🔍</span><input id="ps" placeholder="Search clothes, styles, shops..." oninput="filterProds(this.value)"/></div>
+    <div class="chips" id="cat-chips">${cats.map((c,i)=>`<button class="chip ${i===0?'on':''}" onclick="catFilter('${c}',this)">${c}</button>`).join('')}</div>
+    <div class="prod-grid" id="pg-grid">${rPCards(prods)}</div>
+    ${S.cart.length>0?`<div style="padding-bottom:20px"><button class="btn btn-p btn-fw" onclick="goCart()">View Try List (${S.cart.length} of ${S.cfg.maxItems}) →</button></div>`:''}
+  `;
+}
+
+function rPCards(prods){
+  if(!prods.length)return`<div class="empty" style="grid-column:1/-1"><div class="empty-ic">👗</div><div class="empty-t">No products found</div><div class="empty-s">Try a different search or filter</div></div>`;
+  return prods.map(p=>{
+    const inCart=S.cart.find(c=>c.pid===p.id);
+    const sh=gS(p.sid);
+    return `<div class="pc ${inCart?'sel':''}">
+      <div class="pc-img" onclick="toggleCart('${p.id}')">
+        ${p.img?`<img src="${p.img}" alt="${p.name}"/>`:''}
+        <span style="${p.img?'position:absolute;opacity:0':''}">${p.emoji}</span>
+        ${inCart?`<div class="pc-chk">✓</div>`:''}
+        ${!p.stock?`<div class="pc-bdg"><span class="bdg bdg-rose">Out of Stock</span></div>`:''}
+      </div>
+      <div class="pc-info">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-shop">${sh?.name}</div>
+        <div class="pc-price">${fmtP(p)}</div>
+        <div class="sz-row" onclick="event.stopPropagation()">
+          ${p.sizes.map(sz=>`<span class="sz ${S.sizes[p.id]===sz?'on':''}" onclick="pickSz('${p.id}','${sz}',this)">${sz}</span>`).join('')}
+        </div>
+        <button class="btn ${inCart?'btn-d':'btn-p'} btn-xs btn-fw" style="margin-top:7px" onclick="event.stopPropagation();toggleCart('${p.id}')">${inCart?'✕ Remove':'+ Add to Try'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function catFilter(cat,btn){
+  document.querySelectorAll('.chips .chip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const actShops=S.shops.filter(s=>s.status==='Active');
+  let prods=S.products.filter(p=>p.on&&actShops.find(s=>s.id===p.sid));
+  if(cat!=='All')prods=prods.filter(p=>p.cat===cat);
+  const q=$('ps')?.value||'';if(q)prods=prods.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
+  const g=$('pg-grid');if(g)g.innerHTML=rPCards(prods);
+}
+
+function filterProds(q){
+  const actShops=S.shops.filter(s=>s.status==='Active');
+  let prods=S.products.filter(p=>p.on&&actShops.find(s=>s.id===p.sid));
+  const cat=document.querySelector('.chips .chip.on')?.textContent||'All';
+  if(cat!=='All')prods=prods.filter(p=>p.cat===cat);
+  if(q)prods=prods.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||(p.desc||'').toLowerCase().includes(q.toLowerCase()));
+  const g=$('pg-grid');if(g)g.innerHTML=rPCards(prods);
+}
+
+function pickSz(pid,sz,el){
+  S.sizes[pid]=sz;
+  el.closest('.sz-row').querySelectorAll('.sz').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function toggleCart(pid){
+  const p=gP(pid);if(!p||!p.stock){toast('Out of stock');return;}
+  const idx=S.cart.findIndex(c=>c.pid===pid);
+  if(idx>=0){S.cart.splice(idx,1);toast('Removed from try list');}
+  else{
+    const sz=S.sizes[pid]||p.sizes[0];
+    if(!sz&&p.sizes.length>0&&p.sizes[0]!=='Free Size'){toast('Select a size first');return;}
+    if(S.cart.length>=S.cfg.maxItems){toast(`Max ${S.cfg.maxItems} items per try`);return;}
+    S.cart.push({pid,sz:sz||p.sizes[0]});toast('Added to try list ✓');
+  }
+  updCart();renderPg(page);
+}
+
+/* ══════════════ ORDER FLOW ══════════════ */
+function rOrderFlow(){
+  const steps=['Cart','Address','Deposit','Track','Try','Done'];
+  const stepper=`<div class="stepper">${steps.map((s,i)=>`
+    <div class="st-item">
+      <div class="st-wrap">
+        <div class="st-dot ${i<S.orderStep?'done':i===S.orderStep?'cur':'idle'}">${i<S.orderStep?'✓':i+1}</div>
+        <div class="st-lbl ${i===S.orderStep?'cur':''}">${s}</div>
+      </div>
+      ${i<steps.length-1?`<div class="st-line ${i<S.orderStep?'done':'idle'}"></div>`:''}
+    </div>`).join('')}</div>`;
+  const renders=[rCart,rAddr,rDeposit,rTracking,rTrySession,rComplete];
+  return stepper+(renders[S.orderStep]?renders[S.orderStep]():'');
+}
+
+/* STEP 1 — CART */
+function rCart(){
+  if(!S.cart.length)return`<div class="empty"><div class="empty-ic">🛒</div><div class="empty-t">Try list is empty</div><div class="empty-s">Browse and add up to ${S.cfg.maxItems} items</div><button class="btn btn-p" style="margin-top:12px" onclick="S.orderStep=0;renderPg(page)">Browse Items</button></div>`;
+  const total=S.cart.reduce((s,ci)=>{const p=gP(ci.pid);return s+(p?(currency==='INR'?p.INR:p.NGN):0);},0);
+  return `
+    <div class="pg-title" style="margin-bottom:4px">Your Try List</div>
+    <div class="pg-sub" style="margin-bottom:14px">${S.cart.length} of ${S.cfg.maxItems} items</div>
+    <div class="alert a-teal"><span class="a-ic">💡</span><span>You only pay for what you keep. Deposit refunded if you return everything.</span></div>
+    ${S.cart.map(ci=>{const p=gP(ci.pid);const sh=gS(p?.sid);return p?`
+      <div class="card mb10" style="padding:13px 15px;display:flex;gap:11px;align-items:center">
+        <div style="font-size:32px;flex-shrink:0">${p.img?`<img src="${p.img}" style="width:48px;height:48px;border-radius:var(--r8);object-fit:cover"/>`:p.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:13px">${p.name}</div>
+          <div style="font-size:11.5px;color:var(--ink4)">${sh?.name} · Size: ${ci.sz}</div>
+          <div style="font-weight:700;color:var(--teal);margin-top:2px">${fmtP(p)}</div>
+        </div>
+        <button class="btn btn-d btn-xs" onclick="rmCart('${ci.pid}')">Remove</button>
+      </div>`:'';}).join('')}
+    <div class="card mb14" style="padding:13px 15px">
+      <div class="irow"><span class="irow-l">Items total (if kept)</span><span class="irow-v">${fmt(total)}</span></div>
+      <div class="irow"><span class="irow-l">Refundable deposit</span><div class="dep-chip">${dep()} ↩</div></div>
+      <div class="irow"><span class="irow-l">Delivery fee</span><span class="irow-v">${dlv()}</span></div>
+    </div>
+    <button class="btn btn-p btn-fw" onclick="S.orderStep=2;renderPg(page)">Continue to Address →</button>
+    <button class="btn btn-g btn-fw" style="margin-top:8px" onclick="S.orderStep=0;renderPg(page)">← Keep Browsing</button>
+  `;
+}
+function rmCart(pid){S.cart=S.cart.filter(c=>c.pid!==pid);toast('Removed');updCart();renderPg(page);}
+
+/* STEP 2 — ADDRESS */
+function rAddr(){
+  const a=S.chkAddr;
+  return `
+    <div class="pg-title" style="margin-bottom:4px">Delivery Address</div>
+    <div class="pg-sub" style="margin-bottom:14px">Where should we bring your items?</div>
+    <div class="card mb14" style="padding:15px">
+      <div class="fld"><label>Door No. & Street <span class="req">*</span></label><input id="al" placeholder="e.g. 42, Anna Nagar West" value="${a.line}"/></div>
+      <div class="fld"><label>Landmark (optional)</label><input id="alm" placeholder="Near Apollo Hospital" value="${a.lm}"/></div>
+      <div class="frow">
+        <div class="fld"><label>Area / Locality <span class="req">*</span></label><input id="aa" placeholder="Anna Nagar" value="${a.area}"/></div>
+        <div class="fld"><label>Pincode</label><input id="apin" placeholder="600040"/></div>
+      </div>
+      <div class="alert a-teal" style="margin-bottom:0"><span class="a-ic">📍</span><span>You can also share your live WhatsApp location to the rider after ordering</span></div>
+    </div>
+    <button class="btn btn-p btn-fw" onclick="saveAddr()">Continue to Payment →</button>
+    <button class="btn btn-g btn-fw" style="margin-top:8px" onclick="S.orderStep=1;renderPg(page)">← Back to Cart</button>
+  `;
+}
+function saveAddr(){
+  const line=$('al').value.trim(),area=$('aa').value.trim();
+  if(!line||!area){toast('Please enter address and area');return;}
+  S.chkAddr={line,lm:$('alm').value.trim(),area,pin:$('apin')?.value.trim()||''};
+  S.orderStep=3;renderPg(page);
+}
+
+/* STEP 3 — DEPOSIT */
+function rDeposit(){
+  const payNow=currency==='INR'?(S.cfg.depositINR+S.cfg.delivINR):(S.cfg.depositNGN+S.cfg.delivNGN);
+  return `
+    <div class="pg-title" style="margin-bottom:4px">Pay Refundable Deposit</div>
+    <div class="pg-sub" style="margin-bottom:14px">100% refunded if you return everything</div>
+    <div class="hero mb14">
+      <div class="hero-tag">Why a deposit?</div>
+      <div class="hero-title">Protects the shop while clothes travel to you</div>
+      <div class="hero-sub">Fully refunded within 2 hours if you return all items. Adjusted against purchase if you keep anything.</div>
+    </div>
+    <div class="card mb14" style="padding:13px 15px">
+      <div class="irow"><span class="irow-l">Refundable Try Deposit</span><div class="dep-chip">${dep()} REFUNDABLE</div></div>
+      <div class="irow"><span class="irow-l">Delivery Fee</span><span class="irow-v">${dlv()}</span></div>
+      <div class="irow"><span class="irow-l" style="font-weight:700">Pay Now Total</span><span class="irow-v" style="font-size:16px;color:var(--teal)">${fmt(payNow)}</span></div>
+    </div>
+    <div class="pay-grid">
+      ${[{ic:'📱',l:currency==='INR'?'UPI / GPay':'Paystack'},{ic:'💳',l:'Debit Card'},{ic:'🏦',l:currency==='INR'?'Net Banking':'Bank Transfer'},{ic:'💵',l:'Cash on Delivery'}].map(m=>`
+        <div class="pay-opt ${S.payMode===m.l?'on':''}" onclick="pickPay('${m.l}')">
+          <div class="pay-opt-ic">${m.ic}</div>
+          <div class="pay-opt-lbl">${m.l}</div>
+        </div>`).join('')}
+    </div>
+    ${S.depPaid?`<div class="alert a-teal"><span class="a-ic">✅</span><span>Payment via ${S.payMode} confirmed!</span></div>`:''}
+    <button class="btn btn-p btn-fw" ${!S.depPaid?'disabled':''} onclick="placeOrder()">Confirm Order & Notify Rider →</button>
+    <button class="btn btn-g btn-fw" style="margin-top:8px" onclick="S.orderStep=2;renderPg(page)">← Back to Address</button>
+  `;
+}
+function pickPay(mode){S.depPaid=true;S.payMode=mode;toast(`${mode} payment confirmed ✓`);renderPg(page);}
+function placeOrder(){
+  if(!S.depPaid){toast('Select a payment method first');return;}
+  const rider=S.riders.find(r=>r.status==='Available');
+  const sid=gP(S.cart[0]?.pid)?.sid||'SH1';
+  const o={id:nextOid(),cid:'C1',sid,items:[...S.cart],status:'Placed',rid:rider?.id||null,ordered:new Date().toISOString(),tryStarted:null,kept:[],returned:[],addr:`${S.chkAddr.line}, ${S.chkAddr.area}`,pay:S.payMode};
+  S.orders.push(o);S.activeOid=o.id;S.depPaid=false;S.orderStep=4;
+  toast('🎉 Order placed! Rider is coming.');renderPg(page);
+}
+
+/* STEP 4 — TRACKING */
+function rTracking(){
+  const o=S.orders.find(o=>o.id===S.activeOid)||S.orders[S.orders.length-1];
+  const rider=o?gR(o.rid):null;
+  const tSteps=['Order Placed','Rider Assigned','Pickup from Shop','On the Way to You','Arrived — Start Try!'];
+  const cur=o?.status==='Placed'?1:2;
+  return `
+    <div class="pg-title" style="margin-bottom:4px">Order Confirmed! 🎉</div>
+    <div class="pg-sub" style="margin-bottom:14px">Rider is on the way</div>
+    <div class="hero mb14">
+      <div class="hero-tag">Order ${o?.id}</div>
+      <div class="hero-title">Rider picking up your items now</div>
+      <div class="hero-sub">Estimated arrival: 45–90 minutes.</div>
+      <div class="hero-pills"><span class="hero-pill">🏍️ ${rider?.name||'Assigned'}</span><span class="hero-pill">📦 ${S.cart.length} items</span><span class="hero-pill">⏱ ${S.cfg.tryMins} min window</span></div>
+    </div>
+    ${rider?`<div class="card mb14" style="padding:13px 15px;display:flex;gap:11px;align-items:center">
+      <div class="av" style="width:42px;height:42px;background:${avc(rider.name)}22;color:${avc(rider.name)};font-size:13px">${ini(rider.name)}</div>
+      <div style="flex:1"><div style="font-weight:600">${rider.name}</div><div style="font-size:11.5px;color:var(--ink4)">${rider.zone} · ⭐ ${rider.rating} · ${rider.trips} trips</div></div>
+      <a href="tel:${rider.phone}" class="btn btn-o btn-sm">📞 Call</a>
+    </div>`:''}
+    <div class="card mb14">
+      <div class="cd-hd"><div class="cd-title">Live Tracking</div><span class="bdg bdg-amber">In Progress</span></div>
+      ${tSteps.map((s,i)=>`<div style="display:flex;gap:10px;padding:10px 15px;border-bottom:${i<4?'1px solid var(--ink5)':'none'}">
+        <div style="width:19px;height:19px;border-radius:50%;background:${i<=cur?'var(--teal)':'var(--bg)'};border:2px solid ${i<=cur?'var(--teal)':'var(--ink5)'};display:flex;align-items:center;justify-content:center;font-size:10px;color:${i<=cur?'#fff':'var(--ink4)'};flex-shrink:0;margin-top:2px">${i<=cur?'✓':''}</div>
+        <div style="font-size:13px;color:${i<=cur?'var(--ink)':'var(--ink4)'};font-weight:${i===cur?600:400}">${s}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn btn-p btn-fw" onclick="confReceipt('${o?.id}')">✓ Items Received — Start ${S.cfg.tryMins}-min Try Timer</button>
+    <div style="font-size:11.5px;color:var(--ink4);text-align:center;margin-top:8px">Tap when rider hands over your items</div>
+  `;
+}
+function confReceipt(oid){
+  const now=new Date().toISOString();
+  const o=S.orders.find(o=>o.id===oid);
+  if(o){o.status='Try in Progress';o.tryStarted=now;}
+  S.keptItems=[];S.orderStep=5;
+  toast(`⏱ ${S.cfg.tryMins}-min try window started!`);renderPg(page);startTryTimer();
+}
+
+/* STEP 5 — TRY SESSION */
+function rTrySession(){
+  const o=S.orders.find(o=>o.id===S.activeOid)||S.orders[S.orders.length-1];
+  const totalKept=S.keptItems.reduce((s,pid)=>{const p=gP(pid);return s+(p?(currency==='INR'?p.INR:p.NGN):0);},0);
+  return `
+    <div class="pg-title" style="margin-bottom:4px">Try Session Active ⏱</div>
+    <div class="pg-sub" style="margin-bottom:12px">Try everything — choose what to keep</div>
+    <div id="try-timer" class="timer run"><span style="font-size:18px">⏱</span><div><div class="timer-big" id="ttxt">Loading...</div><div style="font-size:11px;opacity:.75">of ${S.cfg.tryMins}-min try window</div></div></div>
+    <div class="alert a-amber" style="margin-bottom:14px"><span class="a-ic">💡</span><span>Tap items below to mark Keep or Return. Rider collects returns after session.</span></div>
+    <div class="card mb14">
+      <div class="cd-hd"><div class="cd-title">Select What to Keep</div><div class="cd-sub">Tap to toggle</div></div>
+      ${S.cart.map(ci=>{const p=gP(ci.pid);const kept=S.keptItems.includes(ci.pid);return p?`
+        <div style="display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--ink5);cursor:pointer;background:${kept?'var(--tl)':''};transition:background .15s" onclick="toggleKept('${ci.pid}')">
+          <div style="font-size:28px;flex-shrink:0">${p.img?`<img src="${p.img}" style="width:44px;height:44px;border-radius:var(--r8);object-fit:cover"/>`:p.emoji}</div>
+          <div style="flex:1"><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11.5px;color:var(--ink4)">Size ${ci.sz}</div><div style="font-weight:700;color:var(--teal)">${fmtP(p)}</div></div>
+          <div style="width:27px;height:27px;border-radius:50%;background:${kept?'var(--teal)':'var(--white)'};border:2px solid ${kept?'var(--teal)':'var(--ink5)'};display:flex;align-items:center;justify-content:center;font-size:14px;color:${kept?'#fff':'var(--ink4)'};transition:all .2s;flex-shrink:0">${kept?'✓':''}</div>
+        </div>`:''}).join('')}
+    </div>
+    <div class="card mb14" style="padding:13px 15px">
+      <div class="irow"><span class="irow-l">Keeping</span><span class="irow-v" style="color:var(--teal)">${S.keptItems.length}</span></div>
+      <div class="irow"><span class="irow-l">Returning</span><span class="irow-v">${S.cart.length-S.keptItems.length}</span></div>
+      <div class="irow"><span class="irow-l" style="font-weight:700">Pay Now</span><span class="irow-v" style="font-size:17px;color:var(--teal)">${fmt(totalKept)}${S.keptItems.length===0?'<span style="font-size:10.5px;color:var(--sage);display:block;text-align:right;font-weight:400">Deposit refunded</span>':''}</span></div>
+    </div>
+    <button class="btn btn-p btn-fw" onclick="finishTry('${o?.id}')">
+      ${S.keptItems.length>0?`Pay ${fmt(totalKept)} & Return Rest`:'Return All (Get Deposit Back)'}
+    </button>
+  `;
+}
+function toggleKept(pid){const i=S.keptItems.indexOf(pid);if(i>=0)S.keptItems.splice(i,1);else S.keptItems.push(pid);renderPg(page);if(S.orderStep===5)startTryTimer();}
+function finishTry(oid){
+  const o=S.orders.find(o=>o.id===oid);
+  if(o){o.returned=S.cart.filter(ci=>!S.keptItems.includes(ci.pid)).map(ci=>ci.pid);o.kept=[...S.keptItems];o.status='Completed';}
+  const total=S.keptItems.reduce((s,pid)=>{const p=gP(pid);return s+(p?(currency==='INR'?p.INR:p.NGN):0);},0);
+  S.orderStep=6;Object.values(timerIds).forEach(clearInterval);timerIds={};
+  toast(S.keptItems.length===0?'All returned! Deposit refund in 2 hrs.':'Payment confirmed! 🎉');renderPg(page);
+}
+
+/* STEP 6 — COMPLETE */
+function rComplete(){
+  const kept=S.keptItems.length;
+  const total=S.keptItems.reduce((s,pid)=>{const p=gP(pid);return s+(p?(currency==='INR'?p.INR:p.NGN):0);},0);
+  return `<div style="text-align:center;padding:24px 0">
+    <div style="font-size:62px;margin-bottom:14px">${kept>0?'🎉':'😊'}</div>
+    <div class="pg-title" style="text-align:center">${kept>0?'Enjoy your new outfit!':'Thanks for trying!'}</div>
+    <div style="font-size:13.5px;color:var(--ink3);margin:8px 0 20px;line-height:1.6">
+      ${kept>0?`You kept ${kept} item${kept>1?'s':''} — total: <strong>${fmt(total)}</strong>`:'Your deposit will be refunded within 2 hours.'}
+    </div>
+    <div class="card mb14" style="padding:13px 15px;text-align:left">
+      <div class="irow"><span class="irow-l">Items kept</span><span class="irow-v" style="color:var(--teal)">${kept}</span></div>
+      <div class="irow"><span class="irow-l">Items returned</span><span class="irow-v">${S.cart.length-kept}</span></div>
+      ${kept===0?`<div class="irow"><span class="irow-l">Deposit refund</span><span class="irow-v" style="color:var(--sage)">${dep()} within 2 hrs</span></div>`:`<div class="irow"><span class="irow-l">Total paid</span><span class="irow-v" style="color:var(--teal)">${fmt(total)}</span></div>`}
+    </div>
+    <button class="btn btn-p btn-fw" onclick="resetOrder()">Browse More Items</button>
+    <button class="btn btn-o btn-fw" style="margin-top:8px" onclick="goToPage('c-orders')">View My Orders</button>
+  </div>`;
+}
+function resetOrder(){S.cart=[];S.orderStep=0;S.keptItems=[];S.sizes={};S.depPaid=false;updCart();renderPg(page);}
+
+/* ══════════════ TIMER ══════════════ */
+function startTryTimer(){
+  const ttxt=$('ttxt'),ttimer=$('try-timer');if(!ttxt)return;
+  const o=S.orders.find(o=>o.id===S.activeOid)||S.orders.find(o=>o.status==='Try in Progress');
+  if(!o?.tryStarted)return;
+  clearInterval(timerIds.try);
+  const upd=()=>{
+    const elapsed=(Date.now()-new Date(o.tryStarted).getTime())/60000;
+    const rem=Math.max(0,S.cfg.tryMins-elapsed);
+    const mins=Math.floor(rem),secs=Math.floor((rem-mins)*60);
+    if(ttxt)ttxt.textContent=rem<=0?'Time is up!':`${mins}m ${String(secs).padStart(2,'0')}s remaining`;
+    if(ttimer)ttimer.className='timer '+(rem<=0?'done':rem<=10?'hot':'run');
+  };
+  upd();timerIds.try=setInterval(upd,1000);
+}
+function miniTimer(tryStarted,win){
+  const el=(Date.now()-new Date(tryStarted).getTime())/60000;
+  const rem=Math.max(0,win-el);const m=Math.floor(rem);
+  const cls=rem<=0?'done':rem<=10?'hot':'run';
+  return `<div class="timer ${cls}" style="margin:8px 0"><span>⏱</span><span class="timer-big">${rem<=0?'Window ended':`${m}m left`}</span><span style="font-size:11px;opacity:.7">of ${win} mins</span></div>`;
+}
+
+/* ══════════════ CUSTOMER ORDERS ══════════════ */
+function rCOrders(){
+  const mine=S.orders.filter(o=>o.cid==='C1');
+  return `
+    <div class="pg-hd"><div><div class="pg-title">My Orders</div><div class="pg-sub">Your try history</div></div></div>
+    ${!mine.length?`<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">No orders yet</div><div class="empty-s">Try browsing some outfits!</div><button class="btn btn-p" style="margin-top:12px" onclick="goToPage('browse')">Browse Now</button></div>`:
+    mine.map(o=>{const sh=gS(o.sid);return`
+      <div class="card mb10" style="padding:15px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+          <span style="font-weight:700;color:var(--teal)">${o.id}</span>
+          <span class="bdg ${sbdg(o.status)}">● ${o.status}</span>
+        </div>
+        <div style="font-size:12px;color:var(--ink4);margin-bottom:8px">${sh?.name} · ${o.items.length} items · ${o.addr}</div>
+        ${o.status==='Try in Progress'&&o.tryStarted?miniTimer(o.tryStarted,S.cfg.tryMins):''}
+        ${o.status==='Completed'?`<div style="display:flex;gap:6px"><span class="bdg bdg-teal">Kept ${o.kept.length}</span><span class="bdg bdg-gray">Returned ${o.returned.length}</span>${gmv(o)>0?`<span class="bdg bdg-sage">Paid ${fmt(gmv(o))}</span>`:''}</div>`:''}
+        <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+          ${o.status==='Try in Progress'?`<button class="btn btn-p btn-sm" onclick="resumeTry('${o.id}')">Continue Try Session →</button>`:''}
+          ${o.status==='Delivered'?`<button class="btn btn-p btn-sm" onclick="startTryDirect('${o.id}')">Confirm Receipt & Start Timer →</button>`:''}
+        </div>
+      </div>`}).join('')}
+  `;
+}
+function resumeTry(oid){
+  S.activeOid=oid;const o=S.orders.find(o=>o.id===oid);
+  if(o){S.cart=o.items.map(i=>({pid:i.pid,sz:i.sz}));S.keptItems=o.kept||[];}
+  S.orderStep=5;goToPage('browse');
+}
+function startTryDirect(oid){
+  S.activeOid=oid;const o=S.orders.find(o=>o.id===oid);
+  if(o){S.cart=o.items.map(i=>({pid:i.pid,sz:i.sz}));o.status='Try in Progress';o.tryStarted=new Date().toISOString();}
+  S.keptItems=[];S.orderStep=5;goToPage('browse');
+}
+
+/* ══════════════ HOW IT WORKS ══════════════ */
+function rHowTo(){
+  const steps=[
+    {ic:'🛍️',t:'Browse local boutiques',d:`Add up to ${S.cfg.maxItems} items from verified shops. Filter by category, size and price.`},
+    {ic:'💳',t:`Pay ${dep()} deposit`,d:'Fully refunded within 2 hours if you return everything. No hidden fees.'},
+    {ic:'🚴',t:'Rider delivers to your door',d:'Verified rider picks up from shop and delivers to your address in 45–90 minutes.'},
+    {ic:'⏱',t:`${S.cfg.tryMins}-min try window`,d:'Try everything in your own home, your own mirror. Timer starts when you confirm receipt.'},
+    {ic:'❤️',t:'Keep what fits, return the rest',d:'Pay only for items you love. Return the rest to the rider — no questions asked.'},
+    {ic:'↩',t:'Deposit back in 2 hours',d:'Full deposit refunded within 2 hours of returning all items. Guaranteed.'},
+  ];
+  return `
+    <div class="pg-hd"><div><div class="pg-title">How TryNFits Works</div><div class="pg-sub">6 steps from browse to wardrobe</div></div></div>
+    ${steps.map((s,i,a)=>`<div class="flow-item"><div class="flow-n">${i+1}</div><div><div class="flow-t">${s.ic} ${s.t}</div><div class="flow-d">${s.d}</div></div></div>${i<a.length-1?'<div class="flow-conn"></div>':''}`).join('')}
+    <div class="alert a-teal" style="margin-top:14px"><span class="a-ic">🌍</span><span>TryNFits operates in Chennai (India) and Lagos (Nigeria) — same rules, same promise.</span></div>
+    <div class="card" style="margin-top:14px;padding:15px">
+      <div class="cd-title" style="margin-bottom:11px">Quick Facts</div>
+      ${[['Max items/try',S.cfg.maxItems],['Try window',`${S.cfg.tryMins} minutes`],['Deposit (INR)',`₹${S.cfg.depositINR} refundable`],['Deposit (NGN)',`₦${S.cfg.depositNGN} refundable`],['Deposit refund SLA','2 hours'],['Shop payout SLA','24 hours']].map(([l,v])=>`<div class="irow"><span class="irow-l">${l}</span><span class="irow-v">${v}</span></div>`).join('')}
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════════════
+   SHOP OWNER PORTAL
+══════════════════════════════════════════════ */
+const MY_SID='SH1';
+const myShop=()=>gS(MY_SID);
+const myOrders=()=>S.orders.filter(o=>o.sid===MY_SID);
+const myProds=()=>S.products.filter(p=>p.sid===MY_SID);
+const shopRev=()=>myOrders().filter(o=>o.status==='Completed').reduce((s,o)=>s+gmv(o),0);
+
+function rShDash(){
+  const sh=myShop(),rev=shopRev(),comm=Math.round(rev*(sh?.comm||11)/100);
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">${sh?.name}</div><div class="pg-sub">${sh?.loc} · ${sh?.zone}</div></div>
+      <span class="bdg ${sbdg(sh?.status)}">${sh?.status}</span>
+    </div>
+    <div class="g4">
+      <div class="card kpi" style="--kc:var(--teal)" data-ic="💰"><div class="kpi-l">Revenue</div><div class="kpi-v">${fmt(rev)}</div></div>
+      <div class="card kpi" style="--kc:var(--sage)" data-ic="✓"><div class="kpi-l">Net Earnings</div><div class="kpi-v">${fmt(rev-comm)}</div></div>
+      <div class="card kpi" style="--kc:var(--amber)" data-ic="📋"><div class="kpi-l">Commission</div><div class="kpi-v">${fmt(comm)}</div></div>
+      <div class="card kpi" style="--kc:#1D6FAD" data-ic="👗"><div class="kpi-l">Active Products</div><div class="kpi-v">${myProds().filter(p=>p.on).length}</div></div>
+    </div>
+    <div class="alert a-teal mb14"><span class="a-ic">💡</span><span>Zero risk — commission only on items the customer actually keeps. No sale = no fee ever.</span></div>
+    <div class="g21">
+      <div>
+        <div class="card mb14">
+          <div class="cd-hd"><div class="cd-title">Recent Orders</div><button class="btn btn-g btn-sm" onclick="goToPage('sh-orders')">View All →</button></div>
+          ${myOrders().length===0?'<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">No orders yet</div></div>':
+          myOrders().slice(0,5).map(o=>{const c=gC(o.cid);return`<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 15px;border-bottom:1px solid var(--ink5)"><div><div style="font-weight:700;color:var(--teal);font-size:12px">${o.id}</div><div style="font-size:11.5px;color:var(--ink4)">${c?.name} · ${o.items.length} items</div></div><span class="bdg ${sbdg(o.status)}">${o.status}</span></div>`;}).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="card mb14" style="padding:15px">
+          <div class="cd-title" style="margin-bottom:11px">Stats</div>
+          <div class="irow"><span class="irow-l">Total Orders</span><span class="irow-v">${sh?.orders}</span></div>
+          <div class="irow"><span class="irow-l">Commission</span><span class="irow-v">${sh?.comm}%</span></div>
+          <div class="irow"><span class="irow-l">Rating</span><span class="irow-v">⭐ ${sh?.rating}</span></div>
+          <div class="irow"><span class="irow-l">Since</span><span class="irow-v">${sh?.joined}</span></div>
+        </div>
+        <div class="card" style="padding:15px">
+          <div class="cd-title" style="margin-bottom:9px">Rules</div>
+          ${['Photo items before dispatch','Dispatch within 30 mins','Commission on kept items only','Payout within 24 hours'].map((r,i)=>`<div style="font-size:12px;padding:5px 0;display:flex;gap:7px;border-bottom:${i<3?'1px solid var(--ink5)':'none'}"><span style="color:var(--teal);font-weight:700">0${i+1}</span>${r}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* SHOP PRODUCTS — full CRUD */
+function rShProds(){
+  const prods=myProds();
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">My Products</div><div class="pg-sub">${prods.length} products · ${prods.filter(p=>p.on).length} active</div></div>
+      <button class="btn btn-p" onclick="openAddProd()">+ Add Product</button>
+    </div>
+    <div class="search-bar"><span class="sb-ic">🔍</span><input placeholder="Search..." oninput="filterShProds(this.value)" id="sps"/></div>
+    <div class="prod-grid" id="sh-pg">${rShProdCards(prods)}</div>
+    ${prods.length===0?`<div class="empty"><div class="empty-ic">👗</div><div class="empty-t">No products yet</div><button class="btn btn-p" style="margin-top:12px" onclick="openAddProd()">Add First Product</button></div>`:''}
+  `;
+}
+function rShProdCards(prods){
+  return prods.map(p=>`
+    <div class="pc" style="opacity:${p.on?1:.5}">
+      <div class="pc-img" style="cursor:default">
+        ${p.img?`<img src="${p.img}" alt="${p.name}"/>`:''}
+        <span style="${p.img?'display:none':''}">${p.emoji}</span>
+        <div class="pc-bdg"><span class="bdg ${p.on?'bdg-teal':'bdg-gray'}">${p.on?'Active':'Hidden'}</span></div>
+      </div>
+      <div class="pc-info">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-shop">${p.cat} · ${p.mat}</div>
+        <div class="pc-price">${fmtP(p)}</div>
+        <div style="font-size:11px;color:var(--ink4);margin-top:2px">Sizes: ${p.sizes.join(', ')}</div>
+        <div style="font-size:11px;color:var(--ink4)">Stock: ${p.stock}</div>
+        <div style="display:flex;gap:5px;margin-top:8px">
+          <button class="btn btn-o btn-xs" style="flex:1" onclick="openEditProd('${p.id}')">✏️</button>
+          <button class="btn ${p.on?'btn-g':'btn-p'} btn-xs" style="flex:1" onclick="toggleProd('${p.id}')">${p.on?'Hide':'Show'}</button>
+          <button class="btn btn-g btn-xs" onclick="delProd('${p.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function filterShProds(q){
+  const prods=myProds().filter(p=>!q||p.name.toLowerCase().includes(q.toLowerCase())||p.cat.toLowerCase().includes(q.toLowerCase()));
+  const g=$('sh-pg');if(g)g.innerHTML=rShProdCards(prods);
+}
+function toggleProd(pid){const p=gP(pid);if(p){p.on=!p.on;toast(`"${p.name}" ${p.on?'shown':'hidden'}`);goToPage('sh-prods');}}
+function delProd(pid){const p=gP(pid);confirm2('Delete Product',`Delete "${p?.name}"? This cannot be undone.`,()=>{S.products=S.products.filter(p=>p.id!==pid);toast('Product deleted');goToPage('sh-prods');});}
+
+const EMOJIS=['👗','👘','👚','👙','🧥','👔','🩱','👒','🧣','👖'];
+const CATS=['Sarees','Salwar','Dresses','Co-ords','Ethnic Wear','Casual Wear','African Wear','Aso-ebi','Kids','Accessories'];
+
+function prodFormHTML(p=null){
+  return `
+    <div class="modal-body">
+      <div class="preview-wrap" id="prod-preview">${p?.img?`<img src="${p.img}" alt="preview"/>`:`<span id="prev-emoji">${p?.emoji||'👗'}</span>`}
+        ${p?.img?`<button class="btn btn-o btn-xs chg-btn" onclick="clearProdImg()">Change</button>`:''}
+      </div>
+      <div class="fsec">Choose Emoji or Upload Photo</div>
+      <div class="img-thumb-row" id="emoji-row">
+        ${EMOJIS.map(e=>`<div class="img-thumb ${(p?.emoji||'👗')===e?'on':''}" style="font-size:24px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:var(--r8)" onclick="pickEmoji('${e}',this)">${e}</div>`).join('')}
+        <div class="img-thumb-add"><input type="file" accept="image/*" onchange="handleProdImg(event)"/>📷</div>
+      </div>
+      <div class="fsec">Product Details</div>
+      <div class="frow">
+        <div class="fld"><label>Name <span class="req">*</span></label><input id="pn" value="${p?.name||''}" placeholder="Product name"/></div>
+        <div class="fld"><label>Category <span class="req">*</span></label><select id="pc">${CATS.map(c=>`<option ${p?.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      </div>
+      <div class="frow">
+        <div class="fld"><label>Price (${currency==='INR'?'₹ INR':'₦ NGN'}) <span class="req">*</span></label><input id="pp1" type="number" value="${p?(currency==='INR'?p.INR:p.NGN):''}" placeholder="2500"/></div>
+        <div class="fld"><label>Price (${currency==='INR'?'₦ NGN':'₹ INR'})</label><input id="pp2" type="number" value="${p?(currency==='INR'?p.NGN:p.INR):''}" placeholder="50000"/></div>
+      </div>
+      <div class="frow">
+        <div class="fld"><label>Material</label><input id="pm" value="${p?.mat||''}" placeholder="Pure Silk"/></div>
+        <div class="fld"><label>Stock</label><input id="pst" type="number" value="${p?.stock||5}"/></div>
+      </div>
+      <div class="fld"><label>Sizes (comma separated)</label><input id="psz" value="${p?.sizes?.join(',')||'S,M,L,XL'}" placeholder="XS,S,M,L,XL or Free Size"/><div class="fld-hint">For sarees/free size items: type "Free Size"</div></div>
+      <div class="fld"><label>Description</label><textarea id="pd">${p?.desc||''}</textarea></div>
+      <div class="fsec">Additional Photos</div>
+      <div class="img-upload-zone"><input type="file" accept="image/*" multiple onchange="handleProdPhotos(event)"/>
+        <div class="img-upload-zone-ic">📸</div>
+        <div class="img-upload-zone-txt">Click to upload product photos</div>
+        <div class="img-upload-zone-sub">Customers see these when browsing</div>
+      </div>
+      <div id="extra-photos" class="img-thumb-row" style="margin-top:8px"></div>
+    </div>
+  `;
+}
+
+function pickEmoji(e,el){document.querySelectorAll('#emoji-row .img-thumb').forEach(t=>t.classList.remove('on'));el.classList.add('on');const prev=$('prev-emoji');if(prev)prev.textContent=e;}
+function handleProdImg(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const p=$('prod-preview');p.innerHTML=`<img src="${e.target.result}" alt="preview"/><button class="btn btn-o btn-xs chg-btn" onclick="clearProdImg()">Change</button>`;p._img=e.target.result;toast('Photo uploaded ✓');};r.readAsDataURL(f);}
+function clearProdImg(){const p=$('prod-preview');const em=document.querySelector('#emoji-row .img-thumb.on')?.textContent||'👗';p.innerHTML=`<span id="prev-emoji">${em}</span>`;p._img=null;}
+function handleProdPhotos(ev){const files=Array.from(ev.target.files).slice(0,5);const c=$('extra-photos');files.forEach(f=>{const r=new FileReader();r.onload=e=>{const img=document.createElement('img');img.src=e.target.result;img.className='img-thumb';img.style.objectFit='cover';c.appendChild(img);toast('Photo added ✓');};r.readAsDataURL(f);});}
+
+function getProdFormData(){
+  const name=$('pn')?.value.trim();const cat=$('pc')?.value;const p1=parseFloat($('pp1')?.value||0);const p2=parseFloat($('pp2')?.value||0);
+  if(!name||!cat||!p1){return null;}
+  const INR=currency==='INR'?p1:(p2||Math.round(p1/20));const NGN=currency==='NGN'?p1:(p2||p1*20);
+  const emoji=$('prev-emoji')?.textContent||document.querySelector('#emoji-row .img-thumb.on')?.textContent||'👗';
+  const img=$('prod-preview')?._img||null;
+  return{name,cat,emoji,img,INR,NGN,mat:$('pm')?.value.trim()||'',stock:parseInt($('pst')?.value||5),sizes:($('psz')?.value||'S,M,L,XL').split(',').map(s=>s.trim()).filter(Boolean),desc:$('pd')?.value.trim()||'',on:true};
+}
+
+function openAddProd(){
+  openMdl(`${prodFormHTML()}<div class="modal-foot"><button class="btn btn-o" onclick="closeMdlForce()">Cancel</button><button class="btn btn-p" onclick="saveProd()">Add Product</button></div>`,'➕ Add Product');
+}
+function saveProd(){
+  const d=getProdFormData();if(!d){toast('Name, category & price required');return;}
+  S.products.push({id:'P'+Date.now(),sid:MY_SID,reviews:0,rating:5,...d});
+  closeMdlForce();toast(`✓ "${d.name}" added`);goToPage('sh-prods');
+}
+function openEditProd(pid){
+  const p=gP(pid);if(!p)return;
+  openMdl(`${prodFormHTML(p)}<div class="modal-foot"><button class="btn btn-o" onclick="closeMdlForce()">Cancel</button><button class="btn btn-p" onclick="updateProd('${pid}')">Save Changes</button></div>`,`✏️ Edit Product`);
+}
+function updateProd(pid){
+  const d=getProdFormData();if(!d){toast('Name, category & price required');return;}
+  const idx=S.products.findIndex(p=>p.id===pid);if(idx>=0)Object.assign(S.products[idx],d);
+  closeMdlForce();toast('Product updated ✓');goToPage('sh-prods');
+}
+
+/* SHOP ORDERS */
+function rShOrders(){
+  const orders=myOrders();
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Orders</div><div class="pg-sub">${orders.length} total</div></div></div>
+    <div class="tab-bar">
+      <button class="tab-btn on" onclick="filterShOrd('all',this)">All (${orders.length})</button>
+      <button class="tab-btn" onclick="filterShOrd('active',this)">Active (${orders.filter(o=>['Placed','Picked Up','Try in Progress','Delivered'].includes(o.status)).length})</button>
+      <button class="tab-btn" onclick="filterShOrd('done',this)">Completed (${orders.filter(o=>o.status==='Completed').length})</button>
+    </div>
+    <div id="sh-ord-list">${rShOrdList(orders)}</div>
+  `;
+}
+function filterShOrd(f,btn){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');let o=myOrders();if(f==='active')o=o.filter(x=>['Placed','Picked Up','Try in Progress','Delivered'].includes(x.status));if(f==='done')o=o.filter(x=>x.status==='Completed');$('sh-ord-list').innerHTML=rShOrdList(o);}
+function rShOrdList(orders){
+  if(!orders.length)return`<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">No orders</div></div>`;
+  return orders.map(o=>{const c=gC(o.cid);const r=gR(o.rid);const payout=gmv(o);const comm=Math.round(payout*(myShop()?.comm||11)/100);return`
+    <div class="card mb10" style="padding:15px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-weight:700;color:var(--teal)">${o.id}</span><span class="bdg ${sbdg(o.status)}">${o.status}</span></div>
+      <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${c?.name||'—'}</span></div>
+      <div class="irow"><span class="irow-l">Rider</span><span class="irow-v">${r?.name||'Not assigned'}</span></div>
+      <div class="irow"><span class="irow-l">Items</span><span class="irow-v">${o.items.length} dispatched</span></div>
+      ${o.status==='Completed'?`<div class="irow"><span class="irow-l">Kept / Returned</span><span class="irow-v">${o.kept.length} / ${o.returned.length}</span></div><div class="irow"><span class="irow-l">Commission</span><span class="irow-v" style="color:var(--rose)">- ${fmt(comm)}</span></div><div class="irow"><span class="irow-l" style="font-weight:700">Your Payout</span><span class="irow-v" style="font-size:16px;color:var(--sage)">${fmt(payout-comm)}</span></div>`:''}
+      ${o.status==='Try in Progress'&&o.tryStarted?miniTimer(o.tryStarted,S.cfg.tryMins):''}
+    </div>`}).join('');
+}
+
+/* SHOP EARNINGS */
+function rShEarn(){
+  const sh=myShop(),rev=shopRev(),comm=Math.round(rev*(sh?.comm||11)/100);
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Earnings</div><div class="pg-sub">Revenue & payout</div></div></div>
+    <div class="g2 mb14">
+      <div class="card kpi" style="--kc:var(--teal)" data-ic="💰"><div class="kpi-l">Gross Revenue</div><div class="kpi-v">${fmt(rev)}</div></div>
+      <div class="card kpi" style="--kc:var(--sage)" data-ic="✓"><div class="kpi-l">Net Payout</div><div class="kpi-v">${fmt(rev-comm)}</div></div>
+    </div>
+    <div class="card mb14" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:11px">Breakdown</div>
+      <div class="irow"><span class="irow-l">Gross Revenue</span><span class="irow-v">${fmt(rev)}</span></div>
+      <div class="irow"><span class="irow-l">TryNFits Commission (${sh?.comm}%)</span><span class="irow-v" style="color:var(--rose)">- ${fmt(comm)}</span></div>
+      <div class="irow"><span class="irow-l" style="font-weight:700">Net Payout</span><span class="irow-v" style="font-size:17px;color:var(--sage)">${fmt(rev-comm)}</span></div>
+    </div>
+    <div class="alert a-amber"><span class="a-ic">⏰</span><span>Payouts within 24 hours of confirmed delivery via bank / Paystack / UPI.</span></div>
+  `;
+}
+
+/* SHOP PROFILE */
+function rShProfile(){
+  const sh=myShop();
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Shop Profile</div><div class="pg-sub">Manage boutique details</div></div>
+      <button class="btn btn-p btn-sm" onclick="openEditShop()">✏️ Edit</button>
+    </div>
+    <div class="card mb14" style="padding:18px">
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:15px">
+        <div style="width:68px;height:68px;border-radius:var(--r12);background:var(--tl);display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;position:relative" id="shop-logo-wrap">
+          ${sh?.logo?`<img src="${sh.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r12);position:absolute;inset:0"/>`:sh?.emoji||'🏪'}
+        </div>
+        <div style="flex:1">
+          <div style="font-size:17px;font-weight:700">${sh?.name}</div>
+          <div style="font-size:12px;color:var(--ink4);margin-top:2px">${sh?.loc}</div>
+          <div style="margin-top:7px"><span class="bdg ${sbdg(sh?.status)}">${sh?.status}</span></div>
+        </div>
+      </div>
+      <div class="irow"><span class="irow-l">Owner</span><span class="irow-v">${sh?.owner}</span></div>
+      <div class="irow"><span class="irow-l">Phone</span><span class="irow-v"><a href="tel:${sh?.phone}">${sh?.phone}</a></span></div>
+      <div class="irow"><span class="irow-l">Location</span><span class="irow-v">${sh?.loc}</span></div>
+      <div class="irow"><span class="irow-l">Zone</span><span class="irow-v">${sh?.zone}</span></div>
+      <div class="irow"><span class="irow-l">Category</span><span class="irow-v">${sh?.cat}</span></div>
+      <div class="irow"><span class="irow-l">Commission</span><span class="irow-v">${sh?.comm}%</span></div>
+      <div class="irow"><span class="irow-l">Rating</span><span class="irow-v">⭐ ${sh?.rating}</span></div>
+      <div style="margin-top:11px;font-size:13px;color:var(--ink3);line-height:1.6">${sh?.desc}</div>
+    </div>
+    <div class="card" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:9px">Shop Logo / Cover</div>
+      <div class="img-upload-zone"><input type="file" accept="image/*" onchange="handleShopLogo(event)"/>
+        <div class="img-upload-zone-ic">📷</div>
+        <div class="img-upload-zone-txt">Upload logo or cover photo</div>
+        <div class="img-upload-zone-sub">Shown to customers when browsing your boutique</div>
+      </div>
+      <div id="shop-logo-preview"></div>
+    </div>
+  `;
+}
+function handleShopLogo(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const sh=myShop();if(sh)sh.logo=e.target.result;$('shop-logo-preview').innerHTML=`<img src="${e.target.result}" style="width:80px;height:80px;border-radius:var(--r8);object-fit:cover;margin-top:9px"/>`;toast('Logo updated ✓');goToPage('sh-profile');};r.readAsDataURL(f);}
+
+function openEditShop(){
+  const sh=myShop();
+  openMdl(`<div class="modal-body">
+    <div class="fld"><label>Shop Name</label><input id="en" value="${sh?.name||''}"/></div>
+    <div class="frow"><div class="fld"><label>Owner Name</label><input id="eo" value="${sh?.owner||''}"/></div><div class="fld"><label>Phone</label><input id="ep" value="${sh?.phone||''}"/></div></div>
+    <div class="fld"><label>Location</label><input id="el" value="${sh?.loc||''}"/></div>
+    <div class="frow"><div class="fld"><label>Zone</label><select id="ez"><option ${sh?.zone==='Zone A'?'selected':''}>Zone A</option><option ${sh?.zone==='Zone B'?'selected':''}>Zone B</option><option ${sh?.zone==='Zone C'?'selected':''}>Zone C</option></select></div><div class="fld"><label>Category</label><select id="ec">${['Ethnic Wear','Western Wear','Casual Wear','Kids Wear','African Wear'].map(c=>`<option ${sh?.cat===c?'selected':''}>${c}</option>`).join('')}</select></div></div>
+    <div class="fld"><label>Description</label><textarea id="ed">${sh?.desc||''}</textarea></div>
+    <div class="fsec">Logo Upload</div>
+    <div class="img-upload-zone"><input type="file" accept="image/*" onchange="handleEditShopLogo(event)"/>
+      <div class="img-upload-zone-ic">📷</div><div class="img-upload-zone-txt">Upload new logo</div>
+    </div>
+    <div id="edit-logo-prev"></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-o" onclick="closeMdlForce()">Cancel</button><button class="btn btn-p" onclick="saveShop()">Save</button></div>
+  `,'✏️ Edit Shop Profile');
+}
+function handleEditShopLogo(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{$('edit-logo-prev').innerHTML=`<img src="${e.target.result}" style="width:70px;height:70px;border-radius:var(--r8);object-fit:cover;margin-top:8px"/>`;$('edit-logo-prev')._logo=e.target.result;};r.readAsDataURL(f);}
+function saveShop(){
+  const sh=myShop();if(!sh)return;
+  sh.name=$('en').value.trim()||sh.name;sh.owner=$('eo').value.trim()||sh.owner;sh.phone=$('ep').value.trim()||sh.phone;
+  sh.loc=$('el').value.trim()||sh.loc;sh.zone=$('ez').value;sh.cat=$('ec').value;sh.desc=$('ed').value.trim()||sh.desc;
+  const lp=$('edit-logo-prev');if(lp?._logo)sh.logo=lp._logo;
+  closeMdlForce();toast('Shop profile updated ✓');goToPage('sh-profile');
+}
+
+/* ══════════════════════════════════════════════
+   RIDER PORTAL
+══════════════════════════════════════════════ */
+const MY_RID='R1';
+const myRider=()=>gR(MY_RID);
+const myRiderOrds=()=>S.orders.filter(o=>o.rid===MY_RID);
+
+function rRdHome(){
+  const me=myRider();
+  const active=myRiderOrds().find(o=>['Placed','Picked Up','Delivered'].includes(o.status));
+  return `
+    <div class="pg-hd">
+      <div><div class="pg-title">Hey, ${me?.name?.split(' ')[0]}! 👋</div><div class="pg-sub">${me?.zone}</div></div>
+      <button class="rider-toggle ${me?.status==='Available'?'on':'off'}" onclick="toggleRider()">
+        <div class="r-dot ${me?.status==='Available'?'on':'off'}"></div>${me?.status==='Available'?'Online':'Go Online'}
+      </button>
+    </div>
+    <div class="g2 mb14">
+      <div class="card kpi" style="--kc:var(--teal)" data-ic="💰"><div class="kpi-l">Today's Earnings</div><div class="kpi-v">${fmtAmt(me?.earnINR,me?.earnNGN)}</div></div>
+      <div class="card kpi" style="--kc:#1D6FAD" data-ic="📦"><div class="kpi-l">Deliveries</div><div class="kpi-v">${me?.trips}</div></div>
+    </div>
+    ${active?`
+      <div class="card mb14" style="border:2px solid var(--teal)">
+        <div class="cd-hd"><div><div class="cd-title" style="color:var(--teal)">Active — ${active.id}</div><div class="cd-sub">${active.status}</div></div><span class="bdg ${sbdg(active.status)}">● ${active.status}</span></div>
+        <div style="padding:15px">
+          ${(()=>{const sh=gS(active.sid);const c=gC(active.cid);return`
+            <div class="irow"><span class="irow-l">Shop</span><span class="irow-v">${sh?.name}</span></div>
+            <div class="irow"><span class="irow-l">Pickup</span><span class="irow-v">${sh?.loc}</span></div>
+            <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${c?.name}</span></div>
+            <div class="irow"><span class="irow-l">Delivery</span><span class="irow-v">${active.addr}</span></div>
+            <div class="irow"><span class="irow-l">Items</span><span class="irow-v">${active.items.length}</span></div>
+          `})()}
+          <div style="background:var(--tl);border-radius:var(--r8);padding:9px 11px;margin:11px 0;font-size:12px;color:var(--teal)">📸 Photo before pickup · 🔢 Count items · ⏱ Timer starts on customer receipt · 🔄 Return in 45 mins</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${active.status==='Placed'?`<button class="btn btn-p" onclick="rdUpdStatus('${active.id}','Picked Up')">✓ Picked Up from Shop</button>`:''}
+            ${active.status==='Picked Up'?`<button class="btn btn-p" onclick="rdUpdStatus('${active.id}','Delivered')">✓ Delivered to Customer</button>`:''}
+            ${active.status==='Delivered'?`<button class="btn btn-o" onclick="rdUpdStatus('${active.id}','Returning')">↩ Collecting Returns</button>`:''}
+            ${active.status==='Returning'?`<button class="btn btn-p" onclick="rdUpdStatus('${active.id}','Completed')">✓ Returns to Shop — Done!</button>`:''}
+          </div>
+        </div>
+      </div>`:`<div class="alert a-teal"><span class="a-ic">🏍️</span><span>${me?.status==='Available'?'You\'re online! New orders will appear here.':'Go online to receive orders.'}</span></div>`}
+    <div class="card" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:10px">Today's Performance</div>
+      <div class="irow"><span class="irow-l">Trips</span><span class="irow-v">${me?.trips}</span></div>
+      <div class="irow"><span class="irow-l">Rating</span><span class="irow-v">⭐ ${me?.rating}</span></div>
+      <div class="irow"><span class="irow-l">Earnings</span><span class="irow-v" style="color:var(--teal)">${fmtAmt(me?.earnINR,me?.earnNGN)}</span></div>
+      <div class="irow"><span class="irow-l">Vehicle</span><span class="irow-v">${me?.vehicle}</span></div>
+    </div>
+  `;
+}
+function toggleRider(){const me=myRider();if(!me)return;me.status=me.status==='Available'?'Offline':'Available';toast(me.status==='Available'?'🟢 You are now online!':'⚫ You are now offline');goToPage('rd-home');}
+function rdUpdStatus(oid,st){
+  const o=S.orders.find(o=>o.id===oid);if(!o)return;o.status=st;
+  if(st==='Delivered')o.tryStarted=new Date().toISOString();
+  const msgs={'Picked Up':'Items picked up ✓','Delivered':'Delivered — try timer started!','Returning':'Collecting returns ↩','Completed':'Order complete! Payout incoming 💰'};
+  toast(msgs[st]||'Status updated');goToPage('rd-home');
+}
+
+function rRdTrips(){
+  const trips=myRiderOrds();
+  return `
+    <div class="pg-hd"><div><div class="pg-title">My Deliveries</div><div class="pg-sub">${trips.length} total</div></div></div>
+    ${!trips.length?`<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">No deliveries yet</div></div>`:
+    trips.map(o=>{const sh=gS(o.sid);const c=gC(o.cid);return`
+      <div class="card mb10" style="padding:15px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:9px"><span style="font-weight:700;color:var(--teal)">${o.id}</span><span class="bdg ${sbdg(o.status)}">${o.status}</span></div>
+        <div class="irow"><span class="irow-l">Shop</span><span class="irow-v">${sh?.name}</span></div>
+        <div class="irow"><span class="irow-l">Customer</span><span class="irow-v">${c?.name}</span></div>
+        <div class="irow"><span class="irow-l">Items</span><span class="irow-v">${o.items.length}</span></div>
+        ${o.status==='Try in Progress'&&o.tryStarted?miniTimer(o.tryStarted,S.cfg.tryMins):''}
+        ${o.status==='Completed'?`<div style="margin-top:8px;display:flex;gap:6px"><span class="bdg bdg-teal">Kept ${o.kept.length}</span><span class="bdg bdg-gray">Returned ${o.returned.length}</span></div>`:''}
+      </div>`}).join('')}
+  `;
+}
+
+function rRdEarn(){
+  const me=myRider();
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Earnings</div><div class="pg-sub">Your delivery income</div></div></div>
+    <div class="g2 mb14">
+      <div class="card kpi" style="--kc:var(--teal)" data-ic="💰"><div class="kpi-l">Today</div><div class="kpi-v">${fmtAmt(me?.earnINR,me?.earnNGN)}</div></div>
+      <div class="card kpi" style="--kc:var(--amber)" data-ic="📦"><div class="kpi-l">Deliveries</div><div class="kpi-v">${me?.trips}</div></div>
+    </div>
+    <div class="card mb14" style="padding:15px">
+      <div class="cd-title" style="margin-bottom:10px">Rate Card</div>
+      <div class="irow"><span class="irow-l">Base per delivery</span><span class="irow-v">${fmtAmt(80,1600)}</span></div>
+      <div class="irow"><span class="irow-l">Return trip</span><span class="irow-v">${fmtAmt(40,800)}</span></div>
+      <div class="irow"><span class="irow-l">Weekend bonus</span><span class="irow-v" style="color:var(--amber)">+${fmtAmt(20,400)}</span></div>
+      <div class="irow"><span class="irow-l">5-star bonus</span><span class="irow-v" style="color:var(--sage)">+${fmtAmt(10,200)} each</span></div>
+      <div class="irow"><span class="irow-l" style="font-weight:700">Today's Total</span><span class="irow-v" style="font-size:16px;color:var(--teal)">${fmtAmt(me?.earnINR,me?.earnNGN)}</span></div>
+    </div>
+    <div class="alert a-teal"><span class="a-ic">💸</span><span>Paid every evening via UPI / Paystack to your registered account.</span></div>
+    <div class="card" style="padding:15px;margin-top:14px">
+      <div class="cd-title" style="margin-bottom:10px">Account & KYC</div>
+      <div class="irow"><span class="irow-l">KYC Status</span><span class="irow-v"><span class="bdg ${me?.kyc?'bdg-teal':'bdg-amber'}">${me?.kyc?'Verified ✓':'Pending'}</span></span></div>
+      <div class="irow"><span class="irow-l">Vehicle</span><span class="irow-v">${me?.vehicle}</span></div>
+      <button class="btn btn-o btn-sm btn-fw" style="margin-top:11px" onclick="toast('Contact support to update payment details')">Update Bank / UPI Details</button>
+    </div>
+  `;
+}
+
+function rRdRules(){
+  const rules=[
+    {ic:'📸',t:'Photo before pickup',d:'Timestamped photo of ALL items at shop before putting in bag. Your protection against damage claims.'},
+    {ic:'🔢',t:'Count and verify',d:'Count items physically. Must match order list exactly. Mismatch? Call ops before leaving shop.'},
+    {ic:'📞',t:'Call 30 mins before delivery',d:'Call customer 30 minutes before arrival. 3 no-answers = notify ops immediately.'},
+    {ic:'⏱',t:'Stay within 45-min window',d:'Timer starts on customer receipt. You must return within window. Do not leave the area.'},
+    {ic:'💰',t:'No price negotiation',d:'Never negotiate price. You deliver only. Discount request = "Contact TryNFits support."'},
+    {ic:'📦',t:'Collect all returns',d:'Count returned items at customer door. Photo before leaving. Bring to shop same day.'},
+    {ic:'📱',t:'Update status in real-time',d:'Picked Up → Delivered → Returning → Complete. Each step triggers payouts and alerts.'},
+  ];
+  return `
+    <div class="pg-hd"><div><div class="pg-title">Rider Rules</div><div class="pg-sub">Non-negotiable — every order</div></div></div>
+    ${rules.map(r=>`<div class="card mb10" style="padding:13px 15px"><div style="display:flex;gap:11px"><div style="font-size:21px;flex-shrink:0">${r.ic}</div><div><div style="font-weight:700;font-size:13px;margin-bottom:3px">${r.t}</div><div style="font-size:12px;color:var(--ink4);line-height:1.6">${r.d}</div></div></div></div>`).join('')}
+  `;
+}
+</script>
+</body>
+</html>
